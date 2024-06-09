@@ -14,17 +14,13 @@ public class WebSocketClientExample
     {
         const bool deBugMode = false;
         if (deBugMode)
-        {
             //删除原有的数据库
             File.Delete("dickfightdatabase.db");
-        }
 
         //首先检测当前目录下是否存在已有的数据库，否则创建SQLite数据库
         if (!File.Exists("dickfightdatabase.db"))
-        {
             // 创建新的 SQLite 数据库
             SQLiteConnection.CreateFile("dickfightdatabase.db");
-        }
 
         const string connectionString = "Data Source=dickfightdatabase.db;Version=3;";
         await using (var connection = new SQLiteConnection(connectionString))
@@ -33,20 +29,22 @@ public class WebSocketClientExample
 
             await using (var command = new SQLiteCommand(connection))
             {
-                command.CommandText = @"
-                    CREATE TABLE IF NOT EXISTS BasicInformation (GUID TEXT PRIMARY KEY,
-                        DickBelongings INTEGER,
-                        NickName TEXT,
-                        Length REAL,
-                        Gender INTEGER,
-                        GroupNumber INTEGER
-                    );CREATE TABLE IF NOT EXISTS BattleRecord (
-                        BattleID INTEGER PRIMARY KEY AUTOINCREMENT,
-                        ChallengerGUID TEXT,
-                        DefenderGUID TEXT,
-                        IsWin INTEGER,
-                        Time INTEGER
-                    );";
+                command.CommandText = """
+                                      
+                                                          CREATE TABLE IF NOT EXISTS BasicInformation (GUID TEXT PRIMARY KEY,
+                                                              DickBelongings INTEGER,
+                                                              NickName TEXT,
+                                                              Length REAL,
+                                                              Gender INTEGER,
+                                                              GroupNumber INTEGER
+                                                          );CREATE TABLE IF NOT EXISTS BattleRecord (
+                                                              BattleID INTEGER PRIMARY KEY AUTOINCREMENT,
+                                                              ChallengerGUID TEXT,
+                                                              DefenderGUID TEXT,
+                                                              IsWin INTEGER,
+                                                              Time INTEGER
+                                                          );
+                                      """;
                 command.ExecuteNonQuery();
             }
         }
@@ -96,7 +94,7 @@ public class WebSocketClientExample
         {
             var result =
                 await clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            
+
             if (result.MessageType == WebSocketMessageType.Text)
             {
                 var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
@@ -118,7 +116,7 @@ public class WebSocketClientExample
                                 action = "send_group_msg_rate_limited",
                                 @params = new
                                 {
-                                    group_id = groupMessage.group_id,
+                                    groupMessage.group_id,
                                     message = "牛子系统处于施工当中！"
                                 }
                             };
@@ -134,8 +132,8 @@ public class WebSocketClientExample
                                 action = "send_group_msg_rate_limited",
                                 @params = new
                                 {
-                                    group_id = groupMessage.group_id,
-                                    message = "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子 3.锻炼"
+                                    groupMessage.group_id,
+                                    message = "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子 3.锻炼（开发中）"
                                 }
                             };
                             var message = JsonSerializer.Serialize(messageObject);
@@ -146,14 +144,13 @@ public class WebSocketClientExample
                         {
                             //判断是否已经有了牛子
                             bool ifExist;
-                            string existGuid;
                             await using (var connection = new SQLiteConnection(connectionString))
                             {
                                 connection.Open();
 
-                                var dickBelongings = groupMessage.user_id; // 你的具体数值
-                                var groupNumber = groupMessage.group_id; // 你的具体数值
-
+                                var dickBelongings = groupMessage.user_id;
+                                var groupNumber = groupMessage.group_id;
+                                //查询是否已经存在牛子
                                 await using (var command = new SQLiteCommand(connection))
                                 {
                                     command.CommandText =
@@ -166,38 +163,50 @@ public class WebSocketClientExample
                                         if (reader.Read())
                                         {
                                             //已经存在牛子
-                                            existGuid = reader["GUID"].ToString();
+                                            ifExist = true;
                                         }
                                         else
                                         {
                                             Console.WriteLine("不存在对应的行，返回值为FALSE");
+                                            ifExist = false;
                                         }
                                     }
                                 }
                             }
 
-                            Console.WriteLine("尝试生成一只牛子！");
-                            var newGuid = Guid.NewGuid().ToString();
-                            var newDick = new Dick(belongings: groupMessage.user_id, nickName: "不知名的牛子", gender: 0,
-                                GenerateRandom.GetRandomDouble(5d, 15d), guid: newGuid);
-
-                            await using (var connection = new SQLiteConnection(connectionString))
+                            string stringMessage;
+                            if (ifExist)
                             {
-                                connection.Open();
+                                stringMessage = $"用户{groupMessage.user_id}，你已经有了一只牛子，请不要贪心！";
+                            }
+                            else
+                            {
+                                Console.WriteLine("尝试生成一只牛子！");
+                                var newGuid = Guid.NewGuid().ToString();
+                                var newDick = new Dick(groupMessage.user_id, "不知名的牛子", 0,
+                                    GenerateRandom.GetRandomDouble(5d, 15d), newGuid);
 
-                                await using (var command = new SQLiteCommand(connection))
+                                await using (var connection = new SQLiteConnection(connectionString))
                                 {
-                                    command.CommandText =
-                                        "INSERT INTO BasicInformation (GUID, DickBelongings, NickName, Length, Gender, GroupNumber) " +
-                                        "VALUES (@GUID, @DickBelongings, @NickName, @Length, @Gender, @GroupNumber)";
-                                    command.Parameters.AddWithValue("@GUID", newDick.GUID);
-                                    command.Parameters.AddWithValue("@DickBelongings", groupMessage.user_id);
-                                    command.Parameters.AddWithValue("@NickName", "不知名的牛子");
-                                    command.Parameters.AddWithValue("@Length", newDick.Length);
-                                    command.Parameters.AddWithValue("@Gender", 1);
-                                    command.Parameters.AddWithValue("@GroupNumber", groupMessage.group_id);
-                                    command.ExecuteNonQuery();
+                                    connection.Open();
+
+                                    await using (var command = new SQLiteCommand(connection))
+                                    {
+                                        command.CommandText =
+                                            "INSERT INTO BasicInformation (GUID, DickBelongings, NickName, Length, Gender, GroupNumber) " +
+                                            "VALUES (@GUID, @DickBelongings, @NickName, @Length, @Gender, @GroupNumber)";
+                                        command.Parameters.AddWithValue("@GUID", newDick.GUID);
+                                        command.Parameters.AddWithValue("@DickBelongings", groupMessage.user_id);
+                                        command.Parameters.AddWithValue("@NickName", "不知名的牛子");
+                                        command.Parameters.AddWithValue("@Length", newDick.Length);
+                                        command.Parameters.AddWithValue("@Gender", 1);
+                                        command.Parameters.AddWithValue("@GroupNumber", groupMessage.group_id);
+                                        command.ExecuteNonQuery();
+                                    }
                                 }
+
+                                stringMessage =
+                                    $"用户{groupMessage.user_id}，你的牛子{newDick.GUID}已经成功生成，初始长度为{newDick.Length:F3}cm";
                             }
 
 
@@ -206,13 +215,64 @@ public class WebSocketClientExample
                                 action = "send_group_msg_rate_limited",
                                 @params = new
                                 {
-                                    group_id = groupMessage.group_id,
+                                    groupMessage.group_id,
                                     message =
-                                        $"用户{groupMessage.user_id}，你的牛子{newDick.GUID}已经成功生成，初始长度为{newDick.Length:F3}cm。"
+                                        stringMessage
                                 }
                             };
                             var message = JsonSerializer.Serialize(messageObject);
                             await SendMessage(message);
+                            break;
+                        }
+                        case "我的牛子":
+                        {
+                            string stringMessage;
+                            await using (var connection = new SQLiteConnection(connectionString))
+                            {
+                                connection.Open();
+
+                                var dickBelongings = groupMessage.user_id;
+                                var groupNumber = groupMessage.group_id;
+                                //查询是否已经存在牛子
+                                await using (var command = new SQLiteCommand(connection))
+                                {
+                                    command.CommandText =
+                                        "SELECT GUID FROM BasicInformation WHERE DickBelongings = @DickBelongings AND GroupNumber = @GroupNumber";
+                                    command.Parameters.AddWithValue("@DickBelongings", dickBelongings);
+                                    command.Parameters.AddWithValue("@GroupNumber", groupNumber);
+
+                                    await using (var reader = command.ExecuteReader())
+                                    {
+                                        if (reader.Read())
+                                        {
+                                            //已经存在牛子
+                                            var newDick = new Dick(belongings: (long)reader["DickBelongings"],
+                                                nickName: reader["NickName"].ToString(), gender: (int)reader["Gender"],
+                                                length: (double)reader["Length"], guid: reader["GUID"].ToString());
+                                            stringMessage =
+                                                $"用户{groupMessage.user_id}，你的牛子{newDick.NickName}，牛子身份证{newDick.GUID}，目前长度为{newDick.Length:F2}";
+                                        }
+                                        else
+                                        {
+                                            stringMessage = $"用户{groupMessage.user_id}，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
+                                        }
+                                    }
+                                }
+                            }
+
+                            var messageObject = new
+                            {
+                                action = "send_group_msg_rate_limited",
+                                @params = new
+                                {
+                                    groupMessage.group_id,
+                                    message =
+                                        stringMessage
+                                }
+                            };
+                            var message = JsonSerializer.Serialize(messageObject);
+                            await SendMessage(message);
+
                             break;
                         }
                     }

@@ -1,7 +1,4 @@
-﻿using System.Net.Mail;
-using CoreLibrary.Tools;
-
-namespace CoreLibrary;
+﻿namespace CoreLibrary;
 
 public class Dick
 {

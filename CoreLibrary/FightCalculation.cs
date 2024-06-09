@@ -12,9 +12,9 @@ public class FightCalculation
         double maxRange = 100d)
     {
         var differenceValueRate = Mapping.LogarithmicMapping(differenceValue, maxRange);
-        var winRate = (1 / 3d) + (1 / 6d) * (differenceValueRate + 1);
+        var winRate = 1 / 3d + 1 / 6d * (differenceValueRate + 1);
 
-        var boolResult = GenerateRandom.GetRandomDouble(0, 1) < winRate; //随机生成一个0-1之间的数，判定胜负
+        var boolResult = GenerateRandom.GetRandomDouble() < winRate; //随机生成一个0-1之间的数，判定胜负
 
         if (boolResult)
         {

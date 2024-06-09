@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CoreLibrary\CoreLibrary.csproj" />
+        <ProjectReference Include="..\CoreLibrary\CoreLibrary.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+        <PackageReference Include="System.Data.SQLite" Version="1.0.118"/>
     </ItemGroup>
 
 </Project>

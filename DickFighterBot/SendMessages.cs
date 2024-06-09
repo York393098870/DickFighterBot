@@ -1,11 +1,8 @@
-﻿using System.Text.Json;
-
-namespace DickFighterBot;
+﻿namespace DickFighterBot;
 
 public class SendMessages
 {
     public async Task SendGroupMessage()
     {
-        
     }
 }
