@@ -11,4 +11,8 @@
       <ProjectReference Include="..\CoreLibrary\CoreLibrary.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+    </ItemGroup>
+
 </Project>

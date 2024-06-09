@@ -10,7 +10,7 @@ public class Message
         public int message_id { get; set; }
         public long group_id { get; set; }
         public long user_id { get; set; }
-        public string? message { get; set; }
+        public dynamic message { get; set; }
         public string? raw_message { get; set; }
     }
 }
