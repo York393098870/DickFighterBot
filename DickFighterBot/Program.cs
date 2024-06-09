@@ -71,6 +71,7 @@ public class WebSocketClientExample
                 var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
                 Console.WriteLine("收到JSON: " + receivedMessage);
 
+
                 // 解析接收到的 JSON 消息
                 try
                 {
