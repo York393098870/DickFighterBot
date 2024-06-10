@@ -14,7 +14,7 @@ public class DickFighterDataBase
         var command = new SQLiteCommand(connection)
         {
             CommandText =
-                "SELECT GUID FROM BasicInformation WHERE DickBelongings = @DickBelongings AND GroupNumber = @GroupNumber"
+                "SELECT GUID, DickBelongings, NickName, Length, Gender FROM BasicInformation WHERE DickBelongings = @DickBelongings AND GroupNumber = @GroupNumber"
         };
         command.Parameters.AddWithValue("@DickBelongings", userId);
         command.Parameters.AddWithValue("@GroupNumber", groupId);
