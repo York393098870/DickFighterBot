@@ -8,6 +8,7 @@ public class DickFighterDataBase
 
     public static async Task<(bool, Dick? dick)> CheckPersonalDick(long userId, long groupId)
     {
+        //给定指定QQ号和群号，查询牛子是否存在并返回结果
         await using var connection = new SQLiteConnection(ConnectionString);
         await connection.OpenAsync();
 

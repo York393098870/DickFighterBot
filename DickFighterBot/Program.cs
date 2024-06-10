@@ -4,6 +4,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.Json;
 using CoreLibrary;
+using CoreLibrary.DataBase;
 using CoreLibrary.Tools;
 
 namespace DickFighterBot;
@@ -203,7 +204,7 @@ public class WebSocketClient
                             }
 
                             stringMessage =
-                                $"用户{groupMessage.user_id}，你的牛子{newDick.GUID}已经成功生成，初始长度为{newDick.Length:F3}cm";
+                                $"用户{groupMessage.user_id}，你的牛子[{newDick.GUID}]已经成功生成，初始长度为{newDick.Length:F3}cm";
                         }
 
 
@@ -230,31 +231,17 @@ public class WebSocketClient
                             var dickBelongings = groupMessage.user_id;
                             var groupNumber = groupMessage.group_id;
                             //查询是否已经存在牛子
-                            await using (var command = new SQLiteCommand(connection))
+
+                            var (item1, newDick) =
+                                await DickFighterDataBase.CheckPersonalDick(dickBelongings, groupNumber);
+                            if (item1)
                             {
-                                command.CommandText =
-                                    "SELECT GUID, DickBelongings, NickName, Length, Gender FROM BasicInformation WHERE DickBelongings = @DickBelongings AND GroupNumber = @GroupNumber";
-                                command.Parameters.AddWithValue("@DickBelongings", dickBelongings);
-                                command.Parameters.AddWithValue("@GroupNumber", groupNumber);
-
-                                await using (var reader = command.ExecuteReader())
-                                {
-                                    if (reader.Read())
-                                    {
-                                        //已经存在牛子
-                                        var newDick = new Dick(belongings: (long)reader["DickBelongings"],
-                                            nickName: reader["NickName"].ToString(),
-                                            gender: Convert.ToInt32(reader["Gender"]),
-                                            length: (double)reader["Length"], guid: reader["GUID"].ToString());
-
-                                        stringMessage =
-                                            $"用户{groupMessage.user_id}，你的牛子{newDick.NickName}，牛子身份证{newDick.GUID}，目前长度为{newDick.Length:F2}cm";
-                                    }
-                                    else
-                                    {
-                                        stringMessage = $"用户{groupMessage.user_id}，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
-                                    }
-                                }
+                                stringMessage =
+                                    $"用户{groupMessage.user_id}，你的牛子[{newDick.NickName}]，牛子身份证{newDick.GUID}，目前长度为{newDick.Length:F2}cm";
+                            }
+                            else
+                            {
+                                stringMessage = $"用户{groupMessage.user_id}，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
                             }
                         }
 
@@ -274,44 +261,13 @@ public class WebSocketClient
                     else if (groupMessage?.raw_message == "锻炼牛子")
                     {
                         string stringMessage;
-                        await using (var connection = new SQLiteConnection(connectionString))
-                        {
-                            connection.Open();
-
-                            var dickBelongings = groupMessage.user_id;
-                            var groupNumber = groupMessage.group_id;
-                            //查询是否已经存在牛子
-                            await using (var command = new SQLiteCommand(connection))
-                            {
-                                command.CommandText =
-                                    "SELECT GUID, DickBelongings, NickName, Length, Gender FROM BasicInformation WHERE DickBelongings = @DickBelongings AND GroupNumber = @GroupNumber";
-                                command.Parameters.AddWithValue("@DickBelongings", dickBelongings);
-                                command.Parameters.AddWithValue("@GroupNumber", groupNumber);
-
-                                await using (var reader = command.ExecuteReader())
-                                {
-                                    if (reader.Read())
-                                    {
-                                        //已经存在牛子
-                                        var newDick = new Dick(belongings: (long)reader["DickBelongings"],
-                                            nickName: reader["NickName"].ToString(),
-                                            gender: Convert.ToInt32(reader["Gender"]),
-                                            length: (double)reader["Length"], guid: reader["GUID"].ToString());
-
-                                        //查询是否锻炼过，或者是否到了可以锻炼的时间
-                                        bool canExercise;
 
 
-                                        stringMessage =
-                                            $"用户{groupMessage.user_id}，你的牛子{newDick.NickName}，牛子身份证{newDick.GUID}，目前长度为{newDick.Length:F2}cm";
-                                    }
-                                    else
-                                    {
-                                        stringMessage = $"用户{groupMessage.user_id}，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
-                                    }
-                                }
-                            }
-                        }
+                        var dickBelongings = groupMessage.user_id;
+                        var groupNumber = groupMessage.group_id;
+                        //查询是否已经存在牛子
+                        var (item1, newDick) =
+                            await DickFighterDataBase.CheckPersonalDick(dickBelongings, groupNumber);
                     }
                 }
                 catch (JsonException ex)

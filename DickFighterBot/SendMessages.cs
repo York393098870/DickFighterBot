@@ -2,7 +2,5 @@
 
 public class SendMessages
 {
-    public async Task SendGroupMessage()
-    {
-    }
+    
 }
