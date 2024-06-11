@@ -1,6 +1,5 @@
 ﻿using System.Data.SQLite;
 using System.Net.WebSockets;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.Json;
 using CoreLibrary;
@@ -12,44 +11,14 @@ namespace DickFighterBot;
 public class WebSocketClient
 {
     private static ClientWebSocket clientWebSocket;
+    private static string databaseFolderPath;
 
     public static async Task Main()
     {
-        var dataBaseSource = Path.Combine(Environment.CurrentDirectory, "dickfightdatabase.db");
-        Console.WriteLine(Environment.CurrentDirectory);
-        var connectionString = $"Data Source={dataBaseSource};Version=3;";
+        // 组合数据库文件路径
 
-        await using (var connection = new SQLiteConnection(connectionString))
-        {
-            connection.Open();
 
-            await using (var command = new SQLiteCommand(connection))
-            {
-                command.CommandText = """
-                                      
-                                                          CREATE TABLE IF NOT EXISTS BasicInformation (GUID TEXT PRIMARY KEY,
-                                                              DickBelongings INTEGER,
-                                                              NickName TEXT,
-                                                              Length REAL,
-                                                              Gender INTEGER,
-                                                              GroupNumber INTEGER
-                                                          );CREATE TABLE IF NOT EXISTS BattleRecord (
-                                                              BattleID INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                              ChallengerGUID TEXT,
-                                                              DefenderGUID TEXT,
-                                                              IsWin INTEGER,
-                                                              Time INTEGER
-                                                          );CREATE TABLE IF NOT EXISTS ExerciseRecord (
-                                                              ExerciseID INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                              DickGUID TEXT,
-                                                              ExerciseTime INTEGER,
-                                                              ExerciseChange REAL,
-                                                              NextExerciseTime INTEGER
-                                                          );
-                                      """;
-                command.ExecuteNonQuery();
-            }
-        }
+        await DickFighterDataBase.InitializeDataBase();
 
         clientWebSocket = new ClientWebSocket();
         var serverUri = new Uri("ws://192.168.2.168:3001");
@@ -72,7 +41,7 @@ public class WebSocketClient
         }
         catch (Exception ex)
         {
-            Console.WriteLine("WebSocket服务器连接失败，错误信息： " + ex.Message);
+            Console.WriteLine("WebSocket服务器连接失败，错误信息：" + ex.Message);
         }
         finally
         {
@@ -90,7 +59,6 @@ public class WebSocketClient
 
     private static async Task ReceiveMessages()
     {
-        const string connectionString = "Data Source=dickfightdatabase.db;Version=3;";
         var buffer = new byte[1024];
         while (clientWebSocket.State == WebSocketState.Open)
         {
@@ -108,166 +76,207 @@ public class WebSocketClient
                 {
                     var groupMessage = JsonSerializer.Deserialize<Message.GroupMessage>(receivedMessage);
 
-                    if (groupMessage?.raw_message == "状态")
+                    switch (groupMessage?.raw_message)
                     {
-                        Console.WriteLine("收到消息：" + groupMessage.raw_message);
-                        var messageObject = new
+                        case "状态":
                         {
-                            action = "send_group_msg_rate_limited",
-                            @params = new
+                            Console.WriteLine("收到消息：" + groupMessage.raw_message);
+                            var messageObject = new
                             {
-                                groupMessage.group_id,
-                                message = "牛子系统处于施工当中！"
-                            }
-                        };
-                        var message = JsonSerializer.Serialize(messageObject);
-                        await SendMessage(message);
-                    }
-                    else if (groupMessage?.raw_message == "牛子系统")
-                    {
-                        Console.WriteLine("主菜单");
-                        var messageObject = new
-                        {
-                            action = "send_group_msg_rate_limited",
-                            @params = new
-                            {
-                                groupMessage.group_id,
-                                message = "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子 3.锻炼（开发中）"
-                            }
-                        };
-                        var message = JsonSerializer.Serialize(messageObject);
-                        await SendMessage(message);
-                    }
-                    else if (groupMessage?.raw_message == "生成牛子")
-                    {
-                        //判断是否已经有了牛子
-                        bool ifExist;
-                        await using (var connection = new SQLiteConnection(connectionString))
-                        {
-                            connection.Open();
-
-                            var dickBelongings = groupMessage.user_id;
-                            var groupNumber = groupMessage.group_id;
-                            //查询是否已经存在牛子
-                            await using (var command = new SQLiteCommand(connection))
-                            {
-                                command.CommandText =
-                                    "SELECT GUID FROM BasicInformation WHERE DickBelongings = @DickBelongings AND GroupNumber = @GroupNumber";
-                                command.Parameters.AddWithValue("@DickBelongings", dickBelongings);
-                                command.Parameters.AddWithValue("@GroupNumber", groupNumber);
-
-                                await using (var reader = command.ExecuteReader())
+                                action = "send_group_msg_rate_limited",
+                                @params = new
                                 {
-                                    if (reader.Read())
-                                    {
-                                        //已经存在牛子
-                                        ifExist = true;
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("不存在对应的行，返回值为FALSE");
-                                        ifExist = false;
-                                    }
+                                    groupMessage.group_id,
+                                    message = "牛子系统处于施工当中！"
                                 }
-                            }
+                            };
+                            var message = JsonSerializer.Serialize(messageObject);
+                            await SendMessage(message);
+                            break;
                         }
-
-                        string stringMessage;
-                        if (ifExist)
+                        case "牛子系统":
                         {
-                            stringMessage = $"用户{groupMessage.user_id}，你已经有了一只牛子，请不要贪心！";
-                        }
-                        else
-                        {
-                            Console.WriteLine("尝试生成一只牛子！");
-                            var newGuid = Guid.NewGuid().ToString();
-                            var newDick = new Dick(groupMessage.user_id, "不知名的牛子", 0,
-                                GenerateRandom.GetRandomDouble(5d, 15d), newGuid);
-
-                            await using (var connection = new SQLiteConnection(connectionString))
+                            Console.WriteLine("主菜单");
+                            var messageObject = new
                             {
-                                connection.Open();
-
-                                await using (var command = new SQLiteCommand(connection))
+                                action = "send_group_msg_rate_limited",
+                                @params = new
                                 {
-                                    command.CommandText =
-                                        "INSERT INTO BasicInformation (GUID, DickBelongings, NickName, Length, Gender, GroupNumber) " +
-                                        "VALUES (@GUID, @DickBelongings, @NickName, @Length, @Gender, @GroupNumber)";
-                                    command.Parameters.AddWithValue("@GUID", newDick.GUID);
-                                    command.Parameters.AddWithValue("@DickBelongings", groupMessage.user_id);
-                                    command.Parameters.AddWithValue("@NickName", "不知名的牛子");
-                                    command.Parameters.AddWithValue("@Length", newDick.Length);
-                                    command.Parameters.AddWithValue("@Gender", 1);
-                                    command.Parameters.AddWithValue("@GroupNumber", groupMessage.group_id);
-                                    command.ExecuteNonQuery();
+                                    groupMessage.group_id,
+                                    message = "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子 3.锻炼牛子"
                                 }
-                            }
-
-                            stringMessage =
-                                $"用户{groupMessage.user_id}，你的牛子[{newDick.GUID}]已经成功生成，初始长度为{newDick.Length:F3}cm";
+                            };
+                            var message = JsonSerializer.Serialize(messageObject);
+                            await SendMessage(message);
+                            break;
                         }
-
-
-                        var messageObject = new
+                        case "生成牛子":
                         {
-                            action = "send_group_msg_rate_limited",
-                            @params = new
+                            //判断是否已经有了牛子
+
+                            var checkResult =
+                                await DickFighterDataBase.CheckPersonalDick(groupMessage.user_id,
+                                    groupMessage.group_id);
+                            var ifExist = checkResult.Item1;
+
+                            string stringMessage;
+                            if (ifExist)
                             {
-                                groupMessage.group_id,
-                                message =
-                                    stringMessage
+                                stringMessage = $"用户{groupMessage.user_id}，你已经有了一只牛子，请不要贪心！";
                             }
-                        };
-                        var message = JsonSerializer.Serialize(messageObject);
-                        await SendMessage(message);
-                    }
-                    else if (groupMessage?.raw_message == "我的牛子")
-                    {
-                        string stringMessage;
-                        await using (var connection = new SQLiteConnection(connectionString))
+                            else
+                            {
+                                Console.WriteLine("尝试生成一只牛子！");
+                                var newGuid = Guid.NewGuid().ToString();
+                                var newDick = new Dick(groupMessage.user_id, "不知名的牛子", 0,
+                                    GenerateRandom.GetRandomDouble(5d, 15d), newGuid);
+
+                                await DickFighterDataBase.GenerateNewDick(groupMessage.user_id, groupMessage.group_id,
+                                    newDick);
+
+                                stringMessage =
+                                    $"用户{groupMessage.user_id}，你的牛子[{newDick.GUID}]已经成功生成，初始长度为{newDick.Length:F3}cm";
+                            }
+
+                            var messageObject = new
+                            {
+                                action = "send_group_msg_rate_limited",
+                                @params = new
+                                {
+                                    groupMessage.group_id,
+                                    message =
+                                        stringMessage
+                                }
+                            };
+                            var message = JsonSerializer.Serialize(messageObject);
+                            await SendMessage(message);
+                            break;
+                        }
+                        case "我的牛子":
                         {
-                            connection.Open();
+                            string stringMessage;
 
-                            var dickBelongings = groupMessage.user_id;
-                            var groupNumber = groupMessage.group_id;
                             //查询是否已经存在牛子
-
                             var (item1, newDick) =
-                                await DickFighterDataBase.CheckPersonalDick(dickBelongings, groupNumber);
+                                await DickFighterDataBase.CheckPersonalDick(groupMessage.user_id,
+                                    groupMessage.group_id);
                             if (item1)
                             {
+                                newDick.Energy = await DickFighterDataBase.CheckEnergy(newDick.GUID);
                                 stringMessage =
-                                    $"用户{groupMessage.user_id}，你的牛子[{newDick.NickName}]，牛子身份证{newDick.GUID}，目前长度为{newDick.Length:F2}cm";
+                                    $"用户{groupMessage.user_id}，你的牛子“{newDick.NickName}”，牛子身份证[{newDick.GUID}]，目前长度为{newDick.Length:F2}cm，当前体力状况：[{newDick.Energy}/240]";
                             }
                             else
                             {
                                 stringMessage = $"用户{groupMessage.user_id}，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
                             }
-                        }
 
-                        var messageObject = new
-                        {
-                            action = "send_group_msg_rate_limited",
-                            @params = new
+
+                            var messageObject = new
                             {
-                                groupMessage.group_id,
-                                message =
-                                    stringMessage
+                                action = "send_group_msg_rate_limited",
+                                @params = new
+                                {
+                                    groupMessage.group_id,
+                                    message =
+                                        stringMessage
+                                }
+                            };
+                            var message = JsonSerializer.Serialize(messageObject);
+                            await SendMessage(message);
+                            break;
+                        }
+                        case "锻炼牛子":
+                        {
+                            string stringMessage;
+
+                            //查询是否已经存在牛子
+                            var (item1, newDick) =
+                                await DickFighterDataBase.CheckPersonalDick(groupMessage.user_id,
+                                    groupMessage.group_id);
+                            if (item1)
+                            {
+                                //检查体力值
+                                var currentEnergy = await DickFighterDataBase.CheckEnergy(newDick.GUID);
+                                if (currentEnergy > 40)
+                                {
+                                    //体力值足够
+                                    var newEnergy = currentEnergy - 40;
+                                    await DickFighterDataBase.UpdateDickEnergy(guid: newDick.GUID, energy: newEnergy);
+                                    var lengthDifference = GenerateRandom.GetRandomDouble(-10, 20);
+                                    newDick.Length += lengthDifference;
+                                    await DickFighterDataBase.UpdateDickLength(newDick.Length, newDick.GUID);
+                                    stringMessage =
+                                        $"用户{groupMessage.user_id}，你的牛子“{newDick.NickName}”，牛子身份证[{newDick.GUID}]，锻炼成功！消耗40体力值，当前体力值为{newEnergy}/240，锻炼使得牛子长度变化{lengthDifference:F3}cm，目前牛子长度为{newDick.Length:F2}cm";
+                                }
+                                else
+                                {
+                                    stringMessage =
+                                        $"用户{groupMessage.user_id}，你的牛子“{newDick.NickName}”，牛子身份证[{newDick.GUID}]，体力值不足，无法锻炼！当前体力值为{currentEnergy}/240";
+                                }
                             }
-                        };
-                        var message = JsonSerializer.Serialize(messageObject);
-                        await SendMessage(message);
-                    }
-                    else if (groupMessage?.raw_message == "锻炼牛子")
-                    {
-                        string stringMessage;
+                            else
+                            {
+                                stringMessage = $"[CQ:at,qq={groupMessage.user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
+                            }
+                            var messageObject = new
+                            {
+                                action = "send_group_msg_rate_limited",
+                                @params = new
+                                {
+                                    groupMessage.group_id,
+                                    message =
+                                        stringMessage
+                                }
+                            };
+                            var message = JsonSerializer.Serialize(messageObject);
+                            await SendMessage(message);
 
+                            break;
+                        }
+                        default:
+                        {
+                            if (groupMessage.raw_message != null && groupMessage.raw_message.Contains("改牛子名"))
+                            {
+                                string stringMessage;
+                                Console.WriteLine("尝试修改牛子名字！");
+                                Console.WriteLine("groupMessage.raw_message: " + groupMessage.raw_message);
+                                var (newName, ifNeedEdit) = 正则表达式.改牛子名(groupMessage.raw_message);
+                                var (item1, newDick) =
+                                    await DickFighterDataBase.CheckPersonalDick(groupMessage.user_id,
+                                        groupMessage.group_id);
+                                if (ifNeedEdit)
+                                {
+                                    if (item1)
+                                    {
+                                        //如果需要修改名字并且有牛子
+                                        stringMessage = $"[CQ:at,qq={groupMessage.user_id}]，你的牛子名字已经修改为[{newName}]！";
+                                        await DickFighterDataBase.UpdateDickNickName(groupMessage.user_id,
+                                            groupMessage.group_id,
+                                            newName);
+                                    }
+                                    else
+                                    {
+                                        stringMessage = $"[CQ:at,qq={groupMessage.user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
+                                    }
 
-                        var dickBelongings = groupMessage.user_id;
-                        var groupNumber = groupMessage.group_id;
-                        //查询是否已经存在牛子
-                        var (item1, newDick) =
-                            await DickFighterDataBase.CheckPersonalDick(dickBelongings, groupNumber);
+                                    var messageObject = new
+                                    {
+                                        action = "send_group_msg_rate_limited",
+                                        @params = new
+                                        {
+                                            groupMessage.group_id,
+                                            message =
+                                                stringMessage
+                                        }
+                                    };
+                                    var message = JsonSerializer.Serialize(messageObject);
+                                    await SendMessage(message);
+                                }
+                            }
+
+                            break;
+                        }
                     }
                 }
                 catch (JsonException ex)

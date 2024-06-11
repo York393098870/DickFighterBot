@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <database>
+        <location>
+            <path></path>
+            <file>database.db</file>
+        </location>
+    </database>
+    <server>
+        <address></address>
+    </server>
+    
+</config>

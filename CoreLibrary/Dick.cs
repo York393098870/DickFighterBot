@@ -12,6 +12,8 @@ public class Dick
         GUID = guid;
     }
 
+    private int _energy;
+
     public long Belongings { get; private set; } //牛子所属的QQ号
 
     public string? NickName { get; set; }
@@ -21,4 +23,10 @@ public class Dick
     public double Length { get; set; }
 
     public string? GUID { get; set; }
+
+    public int Energy
+    {
+        get { return Math.Clamp(_energy, 0, 240); }
+        set { _energy = Math.Clamp(value, 0, 240); }
+    }
 }
