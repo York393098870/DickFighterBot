@@ -225,7 +225,7 @@ public class DickFighterDataBase
             return false;
         }
     }
-    
+
     public static async Task<bool> UpdateDickLength(double length, string guid)
     {
         // 根据GUID更新体力
@@ -241,7 +241,7 @@ public class DickFighterDataBase
             };
             command.Parameters.AddWithValue("@Length", length);
             command.Parameters.AddWithValue("@GUID", guid);
-            
+
 
             // 执行更新操作
             var rowsAffected = await command.ExecuteNonQueryAsync();
@@ -255,5 +255,44 @@ public class DickFighterDataBase
             // 返回更新失败
             return false;
         }
+    }
+
+    public static async Task<Dick?> GetRandomDick(long groupid,string guid)
+    {
+        // 这个方法给定一个groupid和一个excludedGuid，
+        // 在数据库BasicInformation当中根据groupid随机返回一行数据，
+        // 并确保返回的数据中不包含与excludedGuid相同GUID的行。
+        await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
+        await connection.OpenAsync();
+
+        // 构造SQL语句，排除指定GUID
+        var command = new SQLiteCommand(connection)
+        {
+            CommandText =
+                "SELECT * FROM BasicInformation WHERE GroupNumber = @GroupNumber AND GUID != @ExcludedGuid ORDER BY RANDOM() LIMIT 1"
+        };
+
+        // 添加参数
+        command.Parameters.AddWithValue("@GroupNumber", groupid);
+        command.Parameters.AddWithValue("@ExcludedGuid", guid);
+
+        await using var reader = await command.ExecuteReaderAsync();
+
+        // 处理查询结果
+        if (await reader.ReadAsync())
+        {
+            var dick = new Dick(
+                belongings: (long)reader["DickBelongings"],
+                nickName: reader["NickName"].ToString(),
+                gender: Convert.ToInt32(reader["Gender"]),
+                length: (double)reader["Length"], 
+                guid: reader["GUID"].ToString()
+            );
+            return dick;
+        }
+
+        // 未找到符合条件的数据
+        return null; 
+
     }
 }

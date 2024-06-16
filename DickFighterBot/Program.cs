@@ -1,5 +1,4 @@
-﻿using System.Data.SQLite;
-using System.Net.WebSockets;
+﻿using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using CoreLibrary;
@@ -69,8 +68,7 @@ public class WebSocketClient
             {
                 var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
                 Console.WriteLine("收到JSON: " + receivedMessage);
-
-
+                
                 // 解析接收到的 JSON 消息
                 try
                 {
@@ -78,32 +76,15 @@ public class WebSocketClient
 
                     switch (groupMessage?.raw_message)
                     {
-                        case "状态":
-                        {
-                            Console.WriteLine("收到消息：" + groupMessage.raw_message);
-                            var messageObject = new
-                            {
-                                action = "send_group_msg_rate_limited",
-                                @params = new
-                                {
-                                    groupMessage.group_id,
-                                    message = "牛子系统处于施工当中！"
-                                }
-                            };
-                            var message = JsonSerializer.Serialize(messageObject);
-                            await SendMessage(message);
-                            break;
-                        }
                         case "牛子系统":
                         {
-                            Console.WriteLine("主菜单");
                             var messageObject = new
                             {
                                 action = "send_group_msg_rate_limited",
                                 @params = new
                                 {
                                     groupMessage.group_id,
-                                    message = "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子 3.锻炼牛子"
+                                    message = "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子 3.锻炼牛子 4.改牛子名"
                                 }
                             };
                             var message = JsonSerializer.Serialize(messageObject);
@@ -113,12 +94,10 @@ public class WebSocketClient
                         case "生成牛子":
                         {
                             //判断是否已经有了牛子
-
                             var checkResult =
                                 await DickFighterDataBase.CheckPersonalDick(groupMessage.user_id,
                                     groupMessage.group_id);
                             var ifExist = checkResult.Item1;
-
                             string stringMessage;
                             if (ifExist)
                             {
@@ -138,6 +117,11 @@ public class WebSocketClient
                                     $"用户{groupMessage.user_id}，你的牛子[{newDick.GUID}]已经成功生成，初始长度为{newDick.Length:F3}cm";
                             }
 
+                            if (groupMessage.group_id == 836369648)
+                            {
+                                stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
+                            }
+                            
                             var messageObject = new
                             {
                                 action = "send_group_msg_rate_limited",
@@ -164,13 +148,17 @@ public class WebSocketClient
                             {
                                 newDick.Energy = await DickFighterDataBase.CheckEnergy(newDick.GUID);
                                 stringMessage =
-                                    $"用户{groupMessage.user_id}，你的牛子“{newDick.NickName}”，牛子身份证[{newDick.GUID}]，目前长度为{newDick.Length:F2}cm，当前体力状况：[{newDick.Energy}/240]";
+                                    $"用户{groupMessage.user_id}，你的牛子“{newDick.NickName}”，目前长度为{newDick.Length:F2}cm，当前体力状况：[{newDick.Energy}/240]";
                             }
                             else
                             {
                                 stringMessage = $"用户{groupMessage.user_id}，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
                             }
 
+                            if (groupMessage.group_id == 836369648)
+                            {
+                                stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
+                            }
 
                             var messageObject = new
                             {
@@ -197,8 +185,9 @@ public class WebSocketClient
                             if (item1)
                             {
                                 //检查体力值
-                                var currentEnergy = await DickFighterDataBase.CheckEnergy(newDick.GUID);
-                                if (currentEnergy > 40)
+                                newDick.Energy = await DickFighterDataBase.CheckEnergy(newDick.GUID);
+                                var currentEnergy = newDick.Energy;
+                                if (currentEnergy >= 40)
                                 {
                                     //体力值足够
                                     var newEnergy = currentEnergy - 40;
@@ -207,18 +196,24 @@ public class WebSocketClient
                                     newDick.Length += lengthDifference;
                                     await DickFighterDataBase.UpdateDickLength(newDick.Length, newDick.GUID);
                                     stringMessage =
-                                        $"用户{groupMessage.user_id}，你的牛子“{newDick.NickName}”，牛子身份证[{newDick.GUID}]，锻炼成功！消耗40体力值，当前体力值为{newEnergy}/240，锻炼使得牛子长度变化{lengthDifference:F3}cm，目前牛子长度为{newDick.Length:F2}cm";
+                                        $"用户{groupMessage.user_id}，你的牛子“{newDick.NickName}”，锻炼成功！消耗40体力值，当前体力值为{newEnergy}/240，锻炼使得牛子长度变化{lengthDifference:F3}cm，目前牛子长度为{newDick.Length:F2}cm";
                                 }
                                 else
                                 {
                                     stringMessage =
-                                        $"用户{groupMessage.user_id}，你的牛子“{newDick.NickName}”，牛子身份证[{newDick.GUID}]，体力值不足，无法锻炼！当前体力值为{currentEnergy}/240";
+                                        $"用户{groupMessage.user_id}，你的牛子“{newDick.NickName}”，体力值不足，无法锻炼！当前体力值为{currentEnergy}/240";
                                 }
                             }
                             else
                             {
                                 stringMessage = $"[CQ:at,qq={groupMessage.user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
                             }
+
+                            if (groupMessage.group_id == 836369648)
+                            {
+                                stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
+                            }
+                            
                             var messageObject = new
                             {
                                 action = "send_group_msg_rate_limited",
@@ -234,11 +229,96 @@ public class WebSocketClient
 
                             break;
                         }
+                        case "斗牛":
+                        {
+                            string stringMessage;
+                            var (item1, challengerDick) =
+                                await DickFighterDataBase.CheckPersonalDick(groupMessage.user_id,
+                                    groupMessage.group_id);
+                            if (item1)
+                            {
+                                challengerDick.Energy = await DickFighterDataBase.CheckEnergy(challengerDick.GUID);
+                                var currentEnergy = challengerDick.Energy;
+                                if (currentEnergy >= 20)
+                                {
+                                    //体力充足，扣取体力以后决斗
+                                    challengerDick.Energy -= 20;
+                                    await DickFighterDataBase.UpdateDickEnergy(challengerDick.Energy,
+                                        challengerDick.GUID);
+
+                                    //Todo: 查询群内其他人的牛子，随机选择一只牛子进行对战
+                                    var defenderDick = await DickFighterDataBase.GetRandomDick(groupMessage.group_id,
+                                        challengerDick.GUID); //防止自己打自己
+                                    if (defenderDick != null)
+                                    {
+                                        var battleResult = FightCalculation.Calculate(challengerDick.Length,
+                                            defenderDick.Length, 0, challengerDick.Length - defenderDick.Length);
+                                        var stringMessage1 =
+                                            $"用户{groupMessage.user_id}，你的牛子“{challengerDick.NickName}”，消耗20点体力，向 [CQ:at,qq={defenderDick.Belongings}] 发起了斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
+                                        string stringMessage2;
+
+                                        //更新牛子长度
+                                        challengerDick.Length += battleResult.challengerChange;
+                                        defenderDick.Length += battleResult.defenderChange;
+                                        await DickFighterDataBase.UpdateDickLength(challengerDick.Length,
+                                            challengerDick.GUID);
+                                        await DickFighterDataBase.UpdateDickLength(defenderDick.Length,
+                                            defenderDick.GUID);
+
+                                        if (battleResult.isWin)
+                                        {
+                                            stringMessage2 =
+                                                $"你的牛子“{challengerDick.NickName}”在斗牛当中获得了胜利！长度变化为{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F2}cm。对方牛子“{defenderDick.NickName}”长度变化为{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F2}cm。";
+                                        }
+                                        else
+                                        {
+                                            stringMessage2 =
+                                                $"你的牛子“{challengerDick.NickName}”在斗牛当中遗憾地失败！长度变化为{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F2}cm。对方牛子“{defenderDick.NickName}”长度变化为{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F2}cm";
+                                        }
+
+                                        stringMessage = stringMessage1 + stringMessage2;
+                                    }
+                                    else
+                                    {
+                                        stringMessage = $"[CQ:at,qq={groupMessage.user_id}]，群内没有其他牛子！快邀请一只牛子进群吧！";
+                                    }
+                                }
+                                else
+                                {
+                                    stringMessage =
+                                        $"用户{groupMessage.user_id}，你的牛子“{challengerDick.NickName}”，体力值不足，无法斗牛！当前体力值为{currentEnergy}/240";
+                                }
+                            }
+                            else
+                            {
+                                stringMessage = $"[CQ:at,qq={groupMessage.user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
+                            }
+
+                            if (groupMessage.group_id == 836369648)
+                            {
+                                stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
+                            }
+                            
+                            var messageObject = new
+                            {
+                                action = "send_group_msg_rate_limited",
+                                @params = new
+                                {
+                                    groupMessage.group_id,
+                                    message =
+                                        stringMessage
+                                }
+                            };
+                            var message = JsonSerializer.Serialize(messageObject);
+                            await SendMessage(message);
+
+                            //Todo: 发送消息
+                            break;
+                        }
                         default:
                         {
                             if (groupMessage.raw_message != null && groupMessage.raw_message.Contains("改牛子名"))
                             {
-                                string stringMessage;
                                 Console.WriteLine("尝试修改牛子名字！");
                                 Console.WriteLine("groupMessage.raw_message: " + groupMessage.raw_message);
                                 var (newName, ifNeedEdit) = 正则表达式.改牛子名(groupMessage.raw_message);
@@ -247,6 +327,7 @@ public class WebSocketClient
                                         groupMessage.group_id);
                                 if (ifNeedEdit)
                                 {
+                                    string stringMessage;
                                     if (item1)
                                     {
                                         //如果需要修改名字并且有牛子
