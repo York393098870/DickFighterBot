@@ -11,7 +11,7 @@ public class FightCalculation
     public static (bool isWin, double challengerChange, double defenderChange, double winRatePct) Calculate(
         double challengerLength,
         double defenderLength, int morale, double differenceValue,
-        double maxRange = 200d)
+        double maxRange = 400d)
     {
         var differenceValueRate = Mapping.LogarithmicMapping(differenceValue, maxRange);
         var winRate = 1 / 3d + 1 / 6d * (differenceValueRate + 1);

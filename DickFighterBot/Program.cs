@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using CoreLibrary;
 using CoreLibrary.DataBase;
+using CoreLibrary.SendMessages;
 using CoreLibrary.Tools;
 
 namespace DickFighterBot;
@@ -68,7 +69,7 @@ public class WebSocketClient
             {
                 var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
                 Console.WriteLine("收到JSON: " + receivedMessage);
-                
+
                 // 解析接收到的 JSON 消息
                 try
                 {
@@ -78,17 +79,9 @@ public class WebSocketClient
                     {
                         case "牛子系统":
                         {
-                            var messageObject = new
-                            {
-                                action = "send_group_msg_rate_limited",
-                                @params = new
-                                {
-                                    groupMessage.group_id,
-                                    message = "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子 3.锻炼牛子 4.改牛子名"
-                                }
-                            };
-                            var message = JsonSerializer.Serialize(messageObject);
-                            await SendMessage(message);
+                            var stringMessage =
+                                "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子 3.锻炼牛子 4.改牛子名";
+                            await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
                             break;
                         }
                         case "生成牛子":
@@ -121,19 +114,8 @@ public class WebSocketClient
                             {
                                 stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
                             }
-                            
-                            var messageObject = new
-                            {
-                                action = "send_group_msg_rate_limited",
-                                @params = new
-                                {
-                                    groupMessage.group_id,
-                                    message =
-                                        stringMessage
-                                }
-                            };
-                            var message = JsonSerializer.Serialize(messageObject);
-                            await SendMessage(message);
+
+                            await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
                             break;
                         }
                         case "我的牛子":
@@ -160,18 +142,7 @@ public class WebSocketClient
                                 stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
                             }
 
-                            var messageObject = new
-                            {
-                                action = "send_group_msg_rate_limited",
-                                @params = new
-                                {
-                                    groupMessage.group_id,
-                                    message =
-                                        stringMessage
-                                }
-                            };
-                            var message = JsonSerializer.Serialize(messageObject);
-                            await SendMessage(message);
+                            await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
                             break;
                         }
                         case "锻炼牛子":
@@ -213,19 +184,8 @@ public class WebSocketClient
                             {
                                 stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
                             }
-                            
-                            var messageObject = new
-                            {
-                                action = "send_group_msg_rate_limited",
-                                @params = new
-                                {
-                                    groupMessage.group_id,
-                                    message =
-                                        stringMessage
-                                }
-                            };
-                            var message = JsonSerializer.Serialize(messageObject);
-                            await SendMessage(message);
+
+                            await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
 
                             break;
                         }
@@ -298,19 +258,8 @@ public class WebSocketClient
                             {
                                 stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
                             }
-                            
-                            var messageObject = new
-                            {
-                                action = "send_group_msg_rate_limited",
-                                @params = new
-                                {
-                                    groupMessage.group_id,
-                                    message =
-                                        stringMessage
-                                }
-                            };
-                            var message = JsonSerializer.Serialize(messageObject);
-                            await SendMessage(message);
+
+                            await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
 
                             //Todo: 发送消息
                             break;
@@ -341,18 +290,8 @@ public class WebSocketClient
                                         stringMessage = $"[CQ:at,qq={groupMessage.user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
                                     }
 
-                                    var messageObject = new
-                                    {
-                                        action = "send_group_msg_rate_limited",
-                                        @params = new
-                                        {
-                                            groupMessage.group_id,
-                                            message =
-                                                stringMessage
-                                        }
-                                    };
-                                    var message = JsonSerializer.Serialize(messageObject);
-                                    await SendMessage(message);
+                                    await SendMessage(GroupMessage.SendGroupMessage(stringMessage,
+                                        groupMessage.group_id));
                                 }
                             }
 
