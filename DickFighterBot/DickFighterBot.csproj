@@ -15,4 +15,10 @@
         <PackageReference Include="System.Data.SQLite" Version="1.0.118"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="config.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

@@ -27,6 +27,6 @@ public static class DatabaseConnectionManager
 
         var dataBaseSource = Path.Combine(databaseFolderPath, "dickfightdatabase.db");
         _connectionString = $"Data Source={dataBaseSource};Version=3;";
-        Console.WriteLine($"数据库文件路径：{dataBaseSource}");
+        Console.WriteLine($"SQLite数据库已连接！文件路径：{dataBaseSource}");
     }
 }

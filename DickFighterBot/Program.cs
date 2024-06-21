@@ -1,6 +1,7 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using System.Xml;
 using CoreLibrary;
 using CoreLibrary.DataBase;
 using CoreLibrary.SendMessages;
@@ -16,12 +17,17 @@ public class WebSocketClient
     public static async Task Main()
     {
         // 组合数据库文件路径
-
-
         await DickFighterDataBase.InitializeDataBase();
-
         clientWebSocket = new ClientWebSocket();
-        var serverUri = new Uri("ws://192.168.2.168:3001");
+
+        //读取XML配置文件
+        var xmlDocument = new XmlDocument();
+        xmlDocument.Load("config.xml");
+        var addressNode = xmlDocument.SelectSingleNode("/config/server/address");
+        var address = addressNode.InnerText;
+        var fullAddress = $"ws://{address}:3001";
+
+        var serverUri = new Uri(fullAddress);
 
         try
         {
@@ -31,17 +37,17 @@ public class WebSocketClient
             // 启动消息接收任务
             var receiveTask = ReceiveMessages();
 
-
             // 等待消息接收任务完成
             await receiveTask;
 
             await clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Connection closed.",
                 CancellationToken.None);
-            Console.WriteLine("Disconnected from WebSocket server.");
+            Console.WriteLine("从WebSocket服务器断开连接！");
         }
         catch (Exception ex)
         {
             Console.WriteLine("WebSocket服务器连接失败，错误信息：" + ex.Message);
+            Console.ReadKey();
         }
         finally
         {
@@ -54,7 +60,7 @@ public class WebSocketClient
         var messageBytes = Encoding.UTF8.GetBytes(message);
         await clientWebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true,
             CancellationToken.None);
-        Console.WriteLine("已发送消息 " + message);
+        /*Console.WriteLine("已发送消息 " + message);*/
     }
 
     private static async Task ReceiveMessages()
@@ -68,7 +74,7 @@ public class WebSocketClient
             if (result.MessageType == WebSocketMessageType.Text)
             {
                 var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                Console.WriteLine("收到JSON: " + receivedMessage);
+                /*Console.WriteLine("收到JSON: " + receivedMessage);*/
 
                 // 解析接收到的 JSON 消息
                 try
@@ -79,8 +85,8 @@ public class WebSocketClient
                     {
                         case "牛子系统":
                         {
-                            var stringMessage =
-                                "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子 3.锻炼牛子 4.改牛子名";
+                            const string stringMessage =
+                                "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子\n3.锻炼牛子 4.改牛子名\n5.斗牛 6.win";
                             await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
                             break;
                         }
@@ -187,6 +193,34 @@ public class WebSocketClient
 
                             await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
 
+                            break;
+                        }
+                        case "win":
+                        {
+                            var randomNumber = Random.Shared.NextDouble() * 100;
+                            var stringMessage1 =
+                                $"用户{groupMessage.user_id}，你今日的直肠润滑度为{randomNumber:F2}%，";
+                            string stringMessage2;
+                            string stringMessage3;
+                            if (randomNumber <= 33)
+                            {
+                                stringMessage2 = $"看起来难以进入。\n牢Rin寄语：";
+                            }
+                            else if (randomNumber <= 67)
+                            {
+                                stringMessage2 = $"似乎具有一定的颗粒感。\n牢Rin寄语：";
+                            }
+                            else
+                            {
+                                stringMessage2 = $"看起来可以顺利进入。\n牢Rin寄语：";
+                            }
+
+                            string[] stringList =
+                                [$"润滑剂也是非常有用的一种工具。", "直肠马上就打开了。", "怎么润滑都不过分。", "这使南通感到害怕了。", "食用辣椒也是提升体验的一种方式。"];
+                            stringMessage3 = stringList[Random.Shared.Next(0, stringList.Length)];
+
+                            await SendMessage(GroupMessage.SendGroupMessage(
+                                stringMessage1 + stringMessage2 + stringMessage3, groupMessage.group_id));
                             break;
                         }
                         case "斗牛":
@@ -301,7 +335,7 @@ public class WebSocketClient
                 }
                 catch (JsonException ex)
                 {
-                    Console.WriteLine("Error parsing JSON message: " + ex.Message);
+                    Console.WriteLine("解析JSON时出现异常： " + ex.Message);
                 }
             }
         }

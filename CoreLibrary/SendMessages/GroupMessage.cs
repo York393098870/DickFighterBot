@@ -11,7 +11,7 @@ public class GroupMessage
             action = "send_group_msg_rate_limited",
             @params = new
             {
-                groupId, message
+                group_id=groupId, message
             }
         };
         var result = JsonSerializer.Serialize(messageObject);

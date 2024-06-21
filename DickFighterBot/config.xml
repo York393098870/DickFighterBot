@@ -7,7 +7,8 @@
         </location>
     </database>
     <server>
-        <address></address>
+        <address>192.168.2.168</address>
+        <!--        WebSocket服务器端口-->
     </server>
-    
+
 </config>
