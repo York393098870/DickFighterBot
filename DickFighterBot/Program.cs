@@ -6,6 +6,7 @@ using CoreLibrary;
 using CoreLibrary.DataBase;
 using CoreLibrary.SendMessages;
 using CoreLibrary.Tools;
+using DickFighterBot.Functions;
 
 namespace DickFighterBot;
 
@@ -22,7 +23,19 @@ public class WebSocketClient
 
         //读取XML配置文件
         var xmlDocument = new XmlDocument();
-        xmlDocument.Load("config.xml");
+        //如果程序文件夹已经存在config.xml文件，则直接读取，否则读取运行目录下的config.xml文件
+        var configPath = Path.Combine(ProgramPath.MathPath, "config.xml");
+        if (File.Exists(configPath))
+        {
+            xmlDocument.Load(configPath);
+            Console.WriteLine("检测到本地配置文件，已加载！");
+        }
+        else
+        {
+            xmlDocument.Load("config.xml");
+            Console.WriteLine("没有检测到本地配置文件，已加载运行目录下默认配置文件！");
+        }
+
         var addressNode = xmlDocument.SelectSingleNode("/config/server/address");
         var address = addressNode.InnerText;
         var fullAddress = $"ws://{address}:3001";
@@ -55,12 +68,11 @@ public class WebSocketClient
         }
     }
 
-    private static async Task SendMessage(string message)
+    public static async Task SendMessage(string message)
     {
         var messageBytes = Encoding.UTF8.GetBytes(message);
         await clientWebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true,
             CancellationToken.None);
-        /*Console.WriteLine("已发送消息 " + message);*/
     }
 
     private static async Task ReceiveMessages()
@@ -74,7 +86,6 @@ public class WebSocketClient
             if (result.MessageType == WebSocketMessageType.Text)
             {
                 var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                /*Console.WriteLine("收到JSON: " + receivedMessage);*/
 
                 // 解析接收到的 JSON 消息
                 try
@@ -83,11 +94,14 @@ public class WebSocketClient
 
                     switch (groupMessage?.raw_message)
                     {
+                        case "状态":
+                        {
+                            await CurrentStatus.Main(groupMessage.group_id);
+                            break;
+                        }
                         case "牛子系统":
                         {
-                            const string stringMessage =
-                                "牛子系统正在升级，敬请期待！第一时间了解详情请加QQ群：745297798！目前功能：1.生成牛子 2.我的牛子\n3.锻炼牛子 4.改牛子名\n5.斗牛 6.win";
-                            await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
+                            await ShowFunctions.ShowHelp(groupMessage.group_id);
                             break;
                         }
                         case "生成牛子":
@@ -115,13 +129,7 @@ public class WebSocketClient
                                 stringMessage =
                                     $"用户{groupMessage.user_id}，你的牛子[{newDick.GUID}]已经成功生成，初始长度为{newDick.Length:F3}cm";
                             }
-
-                            if (groupMessage.group_id == 836369648)
-                            {
-                                stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
-                            }
-
-                            await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
+                            await SendMessage(GroupMessage.GenerateGroupMessage(stringMessage, groupMessage.group_id));
                             break;
                         }
                         case "我的牛子":
@@ -143,12 +151,7 @@ public class WebSocketClient
                                 stringMessage = $"用户{groupMessage.user_id}，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
                             }
 
-                            if (groupMessage.group_id == 836369648)
-                            {
-                                stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
-                            }
-
-                            await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
+                            await SendMessage(GroupMessage.GenerateGroupMessage(stringMessage, groupMessage.group_id));
                             break;
                         }
                         case "锻炼牛子":
@@ -186,41 +189,13 @@ public class WebSocketClient
                                 stringMessage = $"[CQ:at,qq={groupMessage.user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
                             }
 
-                            if (groupMessage.group_id == 836369648)
-                            {
-                                stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
-                            }
-
-                            await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
+                            await SendMessage(GroupMessage.GenerateGroupMessage(stringMessage, groupMessage.group_id));
 
                             break;
                         }
-                        case "win":
+                        case "润滑度":
                         {
-                            var randomNumber = Random.Shared.NextDouble() * 100;
-                            var stringMessage1 =
-                                $"用户{groupMessage.user_id}，你今日的直肠润滑度为{randomNumber:F2}%，";
-                            string stringMessage2;
-                            string stringMessage3;
-                            if (randomNumber <= 33)
-                            {
-                                stringMessage2 = $"看起来难以进入。\n牢Rin寄语：";
-                            }
-                            else if (randomNumber <= 67)
-                            {
-                                stringMessage2 = $"似乎具有一定的颗粒感。\n牢Rin寄语：";
-                            }
-                            else
-                            {
-                                stringMessage2 = $"看起来可以顺利进入。\n牢Rin寄语：";
-                            }
-
-                            string[] stringList =
-                                [$"润滑剂也是非常有用的一种工具。", "直肠马上就打开了。", "怎么润滑都不过分。", "这使南通感到害怕了。", "食用辣椒也是提升体验的一种方式。"];
-                            stringMessage3 = stringList[Random.Shared.Next(0, stringList.Length)];
-
-                            await SendMessage(GroupMessage.SendGroupMessage(
-                                stringMessage1 + stringMessage2 + stringMessage3, groupMessage.group_id));
+                            await 润滑度.Main(groupMessage.group_id);
                             break;
                         }
                         case "斗牛":
@@ -293,7 +268,7 @@ public class WebSocketClient
                                 stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
                             }
 
-                            await SendMessage(GroupMessage.SendGroupMessage(stringMessage, groupMessage.group_id));
+                            await SendMessage(GroupMessage.GenerateGroupMessage(stringMessage, groupMessage.group_id));
 
                             //Todo: 发送消息
                             break;
@@ -324,7 +299,7 @@ public class WebSocketClient
                                         stringMessage = $"[CQ:at,qq={groupMessage.user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
                                     }
 
-                                    await SendMessage(GroupMessage.SendGroupMessage(stringMessage,
+                                    await SendMessage(GroupMessage.GenerateGroupMessage(stringMessage,
                                         groupMessage.group_id));
                                 }
                             }

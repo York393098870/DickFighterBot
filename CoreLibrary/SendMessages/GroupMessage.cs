@@ -4,7 +4,7 @@ namespace CoreLibrary.SendMessages;
 
 public class GroupMessage
 {
-    public static string SendGroupMessage(string message, long groupId)
+    public static string GenerateGroupMessage(string message, long groupId)
     {
         var messageObject = new
         {
