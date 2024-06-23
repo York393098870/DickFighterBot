@@ -257,7 +257,7 @@ public class DickFighterDataBase
         }
     }
 
-    public static async Task<Dick?> GetRandomDick(long groupid,string guid)
+    public static async Task<Dick?> GetRandomDick(long groupid, string guid)
     {
         // 这个方法给定一个groupid和一个excludedGuid，
         // 在数据库BasicInformation当中根据groupid随机返回一行数据，
@@ -285,14 +285,66 @@ public class DickFighterDataBase
                 belongings: (long)reader["DickBelongings"],
                 nickName: reader["NickName"].ToString(),
                 gender: Convert.ToInt32(reader["Gender"]),
-                length: (double)reader["Length"], 
+                length: (double)reader["Length"],
                 guid: reader["GUID"].ToString()
             );
             return dick;
         }
 
         // 未找到符合条件的数据
-        return null; 
+        return null;
+    }
 
+    public static async Task<(int globalRank, int globalTotal, int groupRank, int groupTotal)> GetLengthRanks(
+        string guid, long groupNumber)
+    {
+        await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
+        await connection.OpenAsync();
+
+        // 获取指定GUID的Length
+        var lengthCommand = new SQLiteCommand(connection)
+        {
+            CommandText = "SELECT Length FROM BasicInformation WHERE GUID = @GUID"
+        };
+        lengthCommand.Parameters.AddWithValue("@GUID", guid);
+
+        var length = (double)(await lengthCommand.ExecuteScalarAsync() ?? throw new Exception("GUID not found"));
+
+        // 获取全局排名和全局总人数
+        var globalRankCommand = new SQLiteCommand(connection)
+        {
+            CommandText = "SELECT COUNT(*) + 1 FROM BasicInformation WHERE Length > @Length"
+        };
+        globalRankCommand.Parameters.AddWithValue("@Length", length);
+
+        var globalRank = Convert.ToInt32(await globalRankCommand.ExecuteScalarAsync() ?? 0);
+
+        var globalTotalCommand = new SQLiteCommand(connection)
+        {
+            CommandText = "SELECT COUNT(*) FROM BasicInformation"
+        };
+
+        var globalTotal = Convert.ToInt32(await globalTotalCommand.ExecuteScalarAsync() ?? 0);
+
+        // 获取群内排名和群内总人数
+        var groupRankCommand = new SQLiteCommand(connection)
+        {
+            CommandText =
+                "SELECT COUNT(*) + 1 FROM BasicInformation WHERE GroupNumber = @GroupNumber AND Length > @Length"
+        };
+        groupRankCommand.Parameters.AddWithValue("@GroupNumber", groupNumber);
+        groupRankCommand.Parameters.AddWithValue("@Length", length);
+
+        var groupRank = Convert.ToInt32(await groupRankCommand.ExecuteScalarAsync() ?? 0);
+
+        var groupTotalCommand = new SQLiteCommand(connection)
+        {
+            CommandText = "SELECT COUNT(*) FROM BasicInformation WHERE GroupNumber = @GroupNumber"
+        };
+        groupTotalCommand.Parameters.AddWithValue("@GroupNumber", groupNumber);
+
+        var groupTotal = Convert.ToInt32(await groupTotalCommand.ExecuteScalarAsync() ?? 0);
+
+        return (globalRank, globalTotal, groupRank, groupTotal);
     }
 }

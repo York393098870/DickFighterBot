@@ -4,7 +4,7 @@ namespace DickFighterBot.Functions;
 
 public class 润滑度
 {
-    public static async Task Main(long user_id)
+    public static async Task Main(long user_id,long group_id)
     {
         var randomNumber = Random.Shared.NextDouble() * 100;
         var stringMessagePart1 =
@@ -26,6 +26,6 @@ public class 润滑度
         ];
         var stringMessagePart4 = stringList[Random.Shared.Next(0, stringList.Length)];
         var stringMessage = stringMessagePart1 + stringMessagePart2 + stringMessagePart3 + stringMessagePart4;
-        await WebSocketClient.SendMessage(GroupMessage.GenerateGroupMessage(stringMessage, user_id));
+        await WebSocketClient.SendMessage(GroupMessage.Generate(stringMessage, group_id));
     }
 }
