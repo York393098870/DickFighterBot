@@ -26,6 +26,6 @@ public class 润滑度
         ];
         var stringMessagePart4 = stringList[Random.Shared.Next(0, stringList.Length)];
         var stringMessage = stringMessagePart1 + stringMessagePart2 + stringMessagePart3 + stringMessagePart4;
-        await WebSocketClient.SendMessage(GroupMessage.Generate(stringMessage, group_id));
+        await WebSocketClient.SendMessage(SendGroupMessage.Generate(stringMessage, group_id));
     }
 }

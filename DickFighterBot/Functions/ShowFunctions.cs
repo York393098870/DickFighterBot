@@ -14,6 +14,6 @@ public class ShowFunctions
                           "4. 改牛子名 [新名字]：修改牛子的名字\n" +
                           "5. 润滑度：查询你的今日润滑度\n" +
                           "6. 我的牛子：查询自己的牛子信息\n" ;
-        await WebSocketClient.SendMessage(GroupMessage.Generate(helpMessage, group_id));
+        await WebSocketClient.SendMessage(SendGroupMessage.Generate(helpMessage, group_id));
     }
 }

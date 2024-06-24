@@ -2,7 +2,7 @@
 
 namespace CoreLibrary.SendMessages;
 
-public class GroupMessage
+public class SendGroupMessage
 {
     public static string Generate(string message, long groupId)
     {
