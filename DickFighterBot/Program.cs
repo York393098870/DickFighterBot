@@ -5,6 +5,7 @@ using System.Xml;
 using CoreLibrary;
 using CoreLibrary.DataBase;
 using DickFighterBot.Functions;
+using NLog;
 
 namespace DickFighterBot;
 
@@ -12,6 +13,9 @@ public class WebSocketClient
 {
     private static ClientWebSocket clientWebSocket;
     private static string databaseFolderPath;
+
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger(); //获取日志记录器
+
 
     public static async Task Main()
     {
@@ -25,12 +29,12 @@ public class WebSocketClient
         if (File.Exists(configPath))
         {
             xmlDocument.Load(configPath);
-            Console.WriteLine("检测到本地配置文件，已加载！");
+            Logger.Info("检测到本地配置文件，已加载！");
         }
         else
         {
             xmlDocument.Load("config.xml");
-            Console.WriteLine("没有检测到本地配置文件，已加载运行目录下默认配置文件！");
+            Logger.Info("没有检测到本地配置文件，已加载运行目录下默认配置文件！");
         }
 
         var addressNode = xmlDocument.SelectSingleNode("/config/server/address");
@@ -41,7 +45,7 @@ public class WebSocketClient
         try
         {
             await clientWebSocket.ConnectAsync(serverUri, CancellationToken.None);
-            Console.WriteLine("WebSocket服务器连接成功！");
+            Logger.Info("WebSocket服务器连接成功！");
 
             // 启动消息接收任务
             var receiveTask = ReceiveMessages();
@@ -51,11 +55,11 @@ public class WebSocketClient
 
             await clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "连接已关闭。",
                 CancellationToken.None);
-            Console.WriteLine("从WebSocket服务器断开连接！");
+            Logger.Info("从WebSocket服务器断开连接！");
         }
         catch (Exception ex)
         {
-            Console.WriteLine("WebSocket服务器连接失败，错误信息：" + ex.Message);
+            Logger.Error("WebSocket服务器连接失败，错误信息：" + ex.Message);
             Console.ReadKey();
         }
         finally
@@ -79,9 +83,10 @@ public class WebSocketClient
         {
             var result =
                 await clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            Console.WriteLine("收到类型为" + result.MessageType + "的消息。");
+            Logger.Trace("收到类型为" + result.MessageType + "的消息。");
             var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
-            Console.WriteLine("收到消息：" + receivedMessage);
+            Logger.Trace("收到消息：" + receivedMessage);
+
             /*if (result.MessageType != WebSocketMessageType.Text) continue;*/
 
             try
@@ -125,6 +130,11 @@ public class WebSocketClient
                         await 斗牛.Main(groupMessage.user_id, groupMessage.group_id);
                         break;
                     }
+                    case "牛子抽卡":
+                    {
+                        //Todo: 牛子抽卡
+                        break;
+                    }
                     default:
                     {
                         if (groupMessage.raw_message != null && groupMessage.raw_message.Contains("改牛子名"))
@@ -138,7 +148,7 @@ public class WebSocketClient
             }
             catch (JsonException ex)
             {
-                Console.WriteLine("解析JSON时出现异常： " + ex.Message);
+                Logger.Warn("解析JSON时出现异常： " + ex.Message);
             }
         }
     }

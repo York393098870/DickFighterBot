@@ -10,10 +10,10 @@ public class CheckMyDick
         string stringMessage;
 
         //查询是否已经存在牛子
-        var (item1, newDick) =
+        var (dickExisted, newDick) =
             await DickFighterDataBase.CheckPersonalDick(user_id,
                 group_id);
-        if (item1)
+        if (dickExisted)
         {
             newDick.Energy = await DickFighterDataBase.CheckEnergy(newDick.GUID);
 

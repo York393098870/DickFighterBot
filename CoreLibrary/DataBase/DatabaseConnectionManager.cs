@@ -3,6 +3,7 @@
 public static class DatabaseConnectionManager
 {
     private static string _connectionString;
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger(); //获取日志记录器
 
     public static string ConnectionString
     {
@@ -20,6 +21,6 @@ public static class DatabaseConnectionManager
 
         var dataBaseSource = Path.Combine(ProgramPath.MathPath, "dickfightdatabase.db");
         _connectionString = $"Data Source={dataBaseSource};Version=3;";
-        Console.WriteLine($"SQLite数据库已连接！文件路径：{dataBaseSource}");
+        Logger.Info($"SQLite数据库已连接！文件路径：{dataBaseSource}");
     }
 }

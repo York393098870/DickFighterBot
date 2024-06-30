@@ -2,8 +2,10 @@
 
 namespace CoreLibrary.DataBase;
 
-public class DickFighterDataBase
+public partial class DickFighterDataBase
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger(); //获取日志记录器
+
     public static async Task InitializeDataBase()
     {
         //初始化数据库
@@ -28,7 +30,7 @@ public class DickFighterDataBase
         await command.ExecuteNonQueryAsync();
     }
 
-    public static async Task<(bool, Dick? dick)> CheckPersonalDick(long userId, long groupId)
+    public static async Task<(bool ifExisted, Dick? dick)> CheckPersonalDick(long userId, long groupId)
     {
         //给定指定QQ号和群号，查询牛子是否存在并返回结果
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -52,11 +54,11 @@ public class DickFighterDataBase
                 reader["NickName"].ToString(),
                 Convert.ToInt32(reader["Gender"]),
                 (double)reader["Length"], reader["GUID"].ToString());
-            return (true, dick);
+            return (ifExisted: true, dick);
         }
 
         dick = null;
-        return (false, dick);
+        return (ifExisted: false, dick);
     }
 
     public static async Task<bool> GenerateNewDick(long userId, long groupId, Dick newDick)
@@ -77,7 +79,7 @@ public class DickFighterDataBase
             };
             command1.Parameters.AddWithValue("@GUID", newDick.GUID);
             command1.Parameters.AddWithValue("@DickBelongings", userId);
-            command1.Parameters.AddWithValue("@NickName", "不知名的牛子");
+            command1.Parameters.AddWithValue("@NickName", "未改名的牛子");
             command1.Parameters.AddWithValue("@Length", newDick.Length);
             command1.Parameters.AddWithValue("@Gender", 1);
             command1.Parameters.AddWithValue("@GroupNumber", groupId);
@@ -98,8 +100,6 @@ public class DickFighterDataBase
 
             var rowsAffected2 = await command2.ExecuteNonQueryAsync();
 
-            Console.WriteLine($"RowsAffected1: {rowsAffected1}, RowsAffected2: {rowsAffected2}");
-
             if (rowsAffected1 > 0 && rowsAffected2 > 0)
             {
                 await transaction.CommitAsync();
@@ -112,8 +112,7 @@ public class DickFighterDataBase
         catch (Exception e)
         {
             // 处理异常，例如记录错误日志
-            Console.WriteLine($"插入数据时发生错误：{e.Message}");
-
+            Logger.Error($"数据库操作：生成新牛子时发生错误：{e.Message}");
             // 返回插入失败
             return false;
         }
@@ -143,8 +142,7 @@ public class DickFighterDataBase
         catch (Exception e)
         {
             // 处理异常，例如记录错误日志
-            Console.WriteLine($"更新数据时发生错误：{e.Message}");
-
+            Logger.Error($"数据库操作：更新牛子昵称时发生错误：{e.Message}");
             // 返回更新失败
             return false;
         }
@@ -204,8 +202,8 @@ public class DickFighterDataBase
         }
         catch (Exception e)
         {
-            // 处理异常，例如记录错误日志
-            Console.WriteLine($"更新数据时发生错误：{e.Message}");
+            // 处理异常，记录错误日志
+            Logger.Error($"数据库操作：更新牛子体力时发生错误：{e.Message}");
 
             // 返回更新失败
             return false;
@@ -235,9 +233,8 @@ public class DickFighterDataBase
         }
         catch (Exception e)
         {
-            // 处理异常，例如记录错误日志
-            Console.WriteLine($"更新数据时发生错误：{e.Message}");
-
+            // 处理异常，记录错误日志
+            Logger.Error($"数据库操作：更新牛子长度时发生错误：{e.Message}");
             // 返回更新失败
             return false;
         }
