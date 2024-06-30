@@ -1,5 +1,5 @@
 ﻿using CoreLibrary.DataBase;
-using CoreLibrary.SendMessages;
+using CoreLibrary.PublicAPI;
 
 namespace DickFighterBot.Functions;
 

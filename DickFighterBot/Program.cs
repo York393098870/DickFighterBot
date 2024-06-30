@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Xml;
 using CoreLibrary;
 using CoreLibrary.DataBase;
-using CoreLibrary.SendMessages;
 using CoreLibrary.Tools;
 using DickFighterBot.Functions;
 
@@ -71,6 +70,7 @@ public class WebSocketClient
         var messageBytes = Encoding.UTF8.GetBytes(message);
         await clientWebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true,
             CancellationToken.None);
+        await Task.Delay(5000);
     }
 
     private static async Task ReceiveMessages()
@@ -80,10 +80,10 @@ public class WebSocketClient
         {
             var result =
                 await clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-
-            if (result.MessageType != WebSocketMessageType.Text) continue;
-
+            Console.WriteLine("收到类型为" + result.MessageType + "的消息。");
             var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
+            Console.WriteLine("收到消息：" + receivedMessage);
+            /*if (result.MessageType != WebSocketMessageType.Text) continue;*/
 
             try
             {
@@ -91,12 +91,12 @@ public class WebSocketClient
 
                 switch (groupMessage?.raw_message)
                 {
-                    case "状态":
+                    case "/status":
                     {
                         await CurrentStatus.Main(groupMessage.group_id);
                         break;
                     }
-                    case "牛子系统":
+                    case "牛子帮助":
                     {
                         await ShowFunctions.ShowHelp(groupMessage.group_id);
                         break;
@@ -130,13 +130,9 @@ public class WebSocketClient
                     {
                         if (groupMessage.raw_message != null && groupMessage.raw_message.Contains("改牛子名"))
                         {
-                            await ChangeDickName.Main(user_id: groupMessage.user_id, group_id: groupMessage.group_id,
+                            await ChangeDickName.Main(user_id: groupMessage.user_id,
+                                group_id: groupMessage.group_id,
                                 rawMessage: groupMessage.raw_message);
-                        }
-                        else if (groupMessage.raw_message != null && groupMessage.raw_message == "waifu" &&
-                                 groupMessage.user_id == 393098870)
-                        {
-                            //Todo:准备做waifu的功能
                         }
 
                         break;
@@ -147,6 +143,7 @@ public class WebSocketClient
             {
                 Console.WriteLine("解析JSON时出现异常： " + ex.Message);
             }
+            
         }
     }
 }

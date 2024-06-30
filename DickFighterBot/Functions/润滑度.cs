@@ -1,4 +1,4 @@
-﻿using CoreLibrary.SendMessages;
+﻿using CoreLibrary.PublicAPI;
 
 namespace DickFighterBot.Functions;
 
@@ -8,7 +8,7 @@ public class 润滑度
     {
         var randomNumber = Random.Shared.NextDouble() * 100;
         var stringMessagePart1 =
-            $"用户{user_id}，你今日的直肠润滑度为{randomNumber:F2}%，";
+            $"用户[CQ:at,qq={user_id}]，你今日的直肠润滑度为{randomNumber:F2}%，";
         var stringMessagePart2 = randomNumber switch
         {
             <= 25 => $"前进的道路上阻力并不小。",

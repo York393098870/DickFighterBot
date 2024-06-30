@@ -1,8 +1,10 @@
-﻿namespace CoreLibrary.SendMessages;
+﻿using System.Text.Json;
+
+namespace CoreLibrary.PublicAPI;
 
 public class GetGroupMember
 {
-    public static void Main(long group_id)
+    public static string Main(long group_id)
     {
         var messageObject = new
         {
@@ -12,5 +14,6 @@ public class GetGroupMember
                 group_id
             }
         };
+        return JsonSerializer.Serialize(messageObject);
     }
 }

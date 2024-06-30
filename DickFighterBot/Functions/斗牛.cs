@@ -1,6 +1,6 @@
 ﻿using CoreLibrary;
 using CoreLibrary.DataBase;
-using CoreLibrary.SendMessages;
+using CoreLibrary.PublicAPI;
 
 namespace DickFighterBot.Functions;
 
@@ -16,10 +16,10 @@ public class 斗牛
         {
             challengerDick.Energy = await DickFighterDataBase.CheckEnergy(challengerDick.GUID);
             var currentEnergy = challengerDick.Energy;
-            if (currentEnergy >= 20)
+            if (currentEnergy >= 40)
             {
                 //体力充足，扣取体力以后决斗
-                challengerDick.Energy -= 20;
+                challengerDick.Energy -= 40;
                 await DickFighterDataBase.UpdateDickEnergy(challengerDick.Energy,
                     challengerDick.GUID);
 
@@ -45,19 +45,19 @@ public class 斗牛
                     if (battleResult.isWin)
                     {
                         stringMessage2 =
-                            $"你的牛子“{challengerDick.NickName}”在斗牛当中获得了胜利！长度变化为{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F2}cm。对方牛子“{defenderDick.NickName}”长度变化为{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F2}cm。";
+                            $"你的牛子“{challengerDick.NickName}”在斗牛当中获得了胜利！长度增加了{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F1}cm。对方牛子“{defenderDick.NickName}”长度变化为{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F1}cm。";
                     }
                     else
                     {
                         stringMessage2 =
-                            $"你的牛子“{challengerDick.NickName}”在斗牛当中遗憾地失败！长度变化为{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F2}cm。对方牛子“{defenderDick.NickName}”长度变化为{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F2}cm";
+                            $"你的牛子“{challengerDick.NickName}”在斗牛当中遗憾地失败！长度变化为{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F1}cm。对方牛子“{defenderDick.NickName}”长度增加了{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F1}cm";
                     }
 
                     stringMessage = stringMessage1 + stringMessage2;
                 }
                 else
                 {
-                    stringMessage = $"[CQ:at,qq={user_id}]，群内没有其他牛子！快邀请一只牛子进群吧！";
+                    stringMessage = $"用户[CQ:at,qq={user_id}]，群内没有其他牛子！快邀请一只牛子进群吧！";
                 }
             }
             else
@@ -68,12 +68,7 @@ public class 斗牛
         }
         else
         {
-            stringMessage = $"[CQ:at,qq={user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
-        }
-
-        if (group_id == 836369648)
-        {
-            stringMessage = "牢Rin还没睡觉，你这是想牛子被封号";
+            stringMessage = $"用户[CQ:at,qq={user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
         }
 
         await WebSocketClient.SendMessage(SendGroupMessage.Generate(stringMessage, group_id));
