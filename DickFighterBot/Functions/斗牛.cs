@@ -31,7 +31,7 @@ public class 斗牛
                     var battleResult = FightCalculation.Calculate(challengerDick.Length,
                         defenderDick.Length, 0, challengerDick.Length - defenderDick.Length);
                     var stringMessage1 =
-                        $"用户[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，消耗20点体力，向 {defenderDick.Belongings}的牛子“{defenderDick.NickName}” 发起了斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
+                        $"用户[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，消耗40点体力，向 {defenderDick.Belongings}的牛子“{defenderDick.NickName}” 发起了斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
                     string stringMessage2;
 
                     //更新牛子长度
@@ -43,15 +43,11 @@ public class 斗牛
                         defenderDick.GUID);
 
                     if (battleResult.isWin)
-                    {
                         stringMessage2 =
                             $"你的牛子“{challengerDick.NickName}”在斗牛当中获得了胜利！长度增加了{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F1}cm。对方牛子“{defenderDick.NickName}”长度变化为{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F1}cm。";
-                    }
                     else
-                    {
                         stringMessage2 =
                             $"你的牛子“{challengerDick.NickName}”在斗牛当中遗憾地失败！长度变化为{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F1}cm。对方牛子“{defenderDick.NickName}”长度增加了{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F1}cm";
-                    }
 
                     stringMessage = stringMessage1 + stringMessage2;
                 }

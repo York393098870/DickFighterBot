@@ -9,7 +9,7 @@ public class CurrentStatus
     public static async Task Main(long group_id)
     {
         var uptime =
-            (DateTime.Now - Process.GetCurrentProcess().StartTime);
+            DateTime.Now - Process.GetCurrentProcess().StartTime;
         var days = uptime.Days;
         var hours = uptime.Hours;
         var minutes = uptime.Minutes;

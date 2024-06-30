@@ -14,10 +14,8 @@ public class 正则表达式
 
         // 检查匹配结果
         if (match.Success)
-        {
             // 提取括号内的内容并返回
             return (newName: match.Groups[1].Value, ifNeedEdit: true);
-        }
 
         // 如果不匹配，则不返回任何内容
         return (newName: null, ifNeedEdit: false);

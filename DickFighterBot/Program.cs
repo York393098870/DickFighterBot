@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Xml;
 using CoreLibrary;
 using CoreLibrary.DataBase;
-using CoreLibrary.Tools;
 using DickFighterBot.Functions;
 
 namespace DickFighterBot;
@@ -103,37 +102,35 @@ public class WebSocketClient
                     }
                     case "生成牛子":
                     {
-                        await GenerateNewDick.Main(user_id: groupMessage.user_id, group_id: groupMessage.group_id);
+                        await GenerateNewDick.Main(groupMessage.user_id, groupMessage.group_id);
                         break;
                     }
                     case "我的牛子":
                     {
-                        await CheckMyDick.Main(user_id: groupMessage.user_id, group_id: groupMessage.group_id);
+                        await CheckMyDick.Main(groupMessage.user_id, groupMessage.group_id);
                         break;
                     }
                     case "锻炼牛子":
                     {
-                        await Exercise.Main(user_id: groupMessage.user_id, group_id: groupMessage.group_id);
+                        await Exercise.Main(groupMessage.user_id, groupMessage.group_id);
                         break;
                     }
                     case "润滑度":
                     {
-                        await 润滑度.Main(user_id: groupMessage.user_id, group_id: groupMessage.group_id);
+                        await 润滑度.Main(groupMessage.user_id, groupMessage.group_id);
                         break;
                     }
                     case "斗牛":
                     {
-                        await 斗牛.Main(user_id: groupMessage.user_id, group_id: groupMessage.group_id);
+                        await 斗牛.Main(groupMessage.user_id, groupMessage.group_id);
                         break;
                     }
                     default:
                     {
                         if (groupMessage.raw_message != null && groupMessage.raw_message.Contains("改牛子名"))
-                        {
-                            await ChangeDickName.Main(user_id: groupMessage.user_id,
-                                group_id: groupMessage.group_id,
-                                rawMessage: groupMessage.raw_message);
-                        }
+                            await ChangeDickName.Main(groupMessage.user_id,
+                                groupMessage.group_id,
+                                groupMessage.raw_message);
 
                         break;
                     }
@@ -143,7 +140,6 @@ public class WebSocketClient
             {
                 Console.WriteLine("解析JSON时出现异常： " + ex.Message);
             }
-            
         }
     }
 }

@@ -2,6 +2,8 @@
 
 public class Dick
 {
+    private int _energy;
+
     //
     public Dick(long belongings, string? nickName, int gender, double length, string? guid)
     {
@@ -11,8 +13,6 @@ public class Dick
         Length = length;
         GUID = guid;
     }
-
-    private int _energy;
 
     public long Belongings { get; private set; } //牛子所属的QQ号
 
@@ -26,7 +26,7 @@ public class Dick
 
     public int Energy
     {
-        get { return Math.Clamp(_energy, 0, 240); }
-        set { _energy = Math.Clamp(value, 0, 240); }
+        get => Math.Clamp(_energy, 0, 240);
+        set => _energy = Math.Clamp(value, 0, 240);
     }
 }

@@ -20,21 +20,9 @@ public class DickFighterDataBase
                                                   Length REAL,
                                                   Gender INTEGER,
                                                   GroupNumber INTEGER
-                                              );CREATE TABLE IF NOT EXISTS BattleRecord (
-                                                  BattleID INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                  ChallengerGUID TEXT,
-                                                  DefenderGUID TEXT,
-                                                  IsWin INTEGER,
-                                                  Time INTEGER
-                                              );CREATE TABLE IF NOT EXISTS ExerciseRecord (
-                                                  ExerciseID INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                  DickGUID TEXT,
-                                                  ExerciseTime INTEGER,
-                                                  ExerciseChange REAL,
-                                                  NextExerciseTime INTEGER
                                               );CREATE TABLE IF NOT EXISTS Energy(
                                                   DickGUID TEXT PRIMARY KEY,
-                                                  EnergyLastUpdate INTEGER,EnergyLastUpdateTime INTEGER);
+                                                  EnergyLastUpdate INTEGER,EnergyLastUpdateTime INTEGER);CREATE TABLE IF NOT EXISTS GachaInformation(GUID TEXT PRIMARY KEY,DickType INTEGER,WeaponType INTEGER,GachaTickets INTEGER)
                           """ //创建数据库表
         };
         await command.ExecuteNonQueryAsync();
@@ -60,10 +48,10 @@ public class DickFighterDataBase
 
         if (await reader.ReadAsync())
         {
-            dick = new Dick(belongings: (long)reader["DickBelongings"],
-                nickName: reader["NickName"].ToString(),
-                gender: Convert.ToInt32(reader["Gender"]),
-                length: (double)reader["Length"], guid: reader["GUID"].ToString());
+            dick = new Dick((long)reader["DickBelongings"],
+                reader["NickName"].ToString(),
+                Convert.ToInt32(reader["Gender"]),
+                (double)reader["Length"], reader["GUID"].ToString());
             return (true, dick);
         }
 
@@ -117,11 +105,9 @@ public class DickFighterDataBase
                 await transaction.CommitAsync();
                 return true;
             }
-            else
-            {
-                await transaction.RollbackAsync();
-                return false;
-            }
+
+            await transaction.RollbackAsync();
+            return false;
         }
         catch (Exception e)
         {
@@ -282,11 +268,11 @@ public class DickFighterDataBase
         if (await reader.ReadAsync())
         {
             var dick = new Dick(
-                belongings: (long)reader["DickBelongings"],
-                nickName: reader["NickName"].ToString(),
-                gender: Convert.ToInt32(reader["Gender"]),
-                length: (double)reader["Length"],
-                guid: reader["GUID"].ToString()
+                (long)reader["DickBelongings"],
+                reader["NickName"].ToString(),
+                Convert.ToInt32(reader["Gender"]),
+                (double)reader["Length"],
+                reader["GUID"].ToString()
             );
             return dick;
         }

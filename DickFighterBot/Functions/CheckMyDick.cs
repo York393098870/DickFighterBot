@@ -18,7 +18,7 @@ public class CheckMyDick
             newDick.Energy = await DickFighterDataBase.CheckEnergy(newDick.GUID);
 
             //计算排名
-            var ranks = await DickFighterDataBase.GetLengthRanks(guid: newDick.GUID, groupNumber: group_id);
+            var ranks = await DickFighterDataBase.GetLengthRanks(newDick.GUID, group_id);
 
             stringMessage = $"基本信息：\n" +
                             $"用户：[CQ:at,qq={user_id}]，你的牛子“{newDick.NickName}”，目前长度为{newDick.Length:F1}cm，当前体力状况：[{newDick.Energy}/240]\n" +

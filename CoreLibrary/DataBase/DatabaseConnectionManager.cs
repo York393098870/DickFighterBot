@@ -8,10 +8,7 @@ public static class DatabaseConnectionManager
     {
         get
         {
-            if (string.IsNullOrEmpty(_connectionString))
-            {
-                InitializeConnectionString();
-            }
+            if (string.IsNullOrEmpty(_connectionString)) InitializeConnectionString();
 
             return _connectionString;
         }
@@ -19,10 +16,7 @@ public static class DatabaseConnectionManager
 
     private static void InitializeConnectionString()
     {
-        if (!Directory.Exists(ProgramPath.MathPath))
-        {
-            Directory.CreateDirectory(ProgramPath.MathPath);
-        }
+        if (!Directory.Exists(ProgramPath.MathPath)) Directory.CreateDirectory(ProgramPath.MathPath);
 
         var dataBaseSource = Path.Combine(ProgramPath.MathPath, "dickfightdatabase.db");
         _connectionString = $"Data Source={dataBaseSource};Version=3;";

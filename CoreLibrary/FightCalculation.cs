@@ -10,10 +10,9 @@ public class FightCalculation
     //以上均为完整代码的情况，我想到了一个绝妙的办法，可以让功能更加完善，但是这里空白太小了，写不下
     public static (bool isWin, double challengerChange, double defenderChange, double winRatePct) Calculate(
         double challengerLength,
-        double defenderLength, int morale, double differenceValue,
-        double maxRange = 400d)
+        double defenderLength, int morale, double differenceValue)
     {
-        var differenceValueRate = Mapping.LogarithmicMapping(differenceValue, maxRange);
+        var differenceValueRate = Mapping.NewMapping(differenceValue);
         var winRate = 1 / 3d + 1 / 6d * (differenceValueRate + 1);
         var winRatePct = winRate * 100;
 
@@ -26,7 +25,7 @@ public class FightCalculation
             Console.WriteLine("获得了胜利！");
             var challengerChangeWhenWin = Math.Abs(differenceValueRate) * GenerateRandom.GetRandomDouble(0.2, 0.4) +
                                           GenerateRandom.GetRandomDouble(0, 10);
-            var defenderChangeWhenLose = -Math.Abs(differenceValueRate) * GenerateRandom.GetRandomDouble(0.1, 0.5) -
+            var defenderChangeWhenLose = -Math.Abs(differenceValueRate) * GenerateRandom.GetRandomDouble(0.1, 0.3) -
                                          GenerateRandom.GetRandomDouble(0, 10);
             return (isWin: boolResult, challengerChange: challengerChangeWhenWin,
                 defenderChange: defenderChangeWhenLose, winRatePct);
@@ -35,7 +34,7 @@ public class FightCalculation
         Console.WriteLine("很遗憾失败了！");
         var challengerChangeWhenLose = -Math.Abs(differenceValueRate) * GenerateRandom.GetRandomDouble(0.2, 0.4) -
                                        GenerateRandom.GetRandomDouble(0, 10);
-        var defenderChangeWhenWin = Math.Abs(differenceValueRate) * GenerateRandom.GetRandomDouble(0.1, 0.5) +
+        var defenderChangeWhenWin = Math.Abs(differenceValueRate) * GenerateRandom.GetRandomDouble(0.1, 0.3) +
                                     GenerateRandom.GetRandomDouble(0, 10);
 
         return (isWin: boolResult, challengerChange: challengerChangeWhenLose,
