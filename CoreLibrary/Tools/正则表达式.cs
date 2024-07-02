@@ -16,9 +16,9 @@ public class 正则表达式
 
         // 检查匹配结果
         if (match.Success)
-            
+
             return (newName: match.Groups[1].Value, ifNeedEdit: true);
-        
+
         return (newName: null, ifNeedEdit: false);
     }
 
@@ -31,12 +31,12 @@ public class 正则表达式
 
         // 检查匹配结果
         if (!match.Success) return (exerciseTimes: null, ifNeedExercise: false);
+
+        var exerciseTimesAvailable = int.TryParse(match.Groups[1].Value,out var result);
         
-        var exerciseTimes = int.Parse(match.Groups[1].Value);
-        
-        if (exerciseTimes > 0)
+        if(exerciseTimesAvailable&&result>0&&result<=6)
         {
-            return (exerciseTimes, ifNeedExercise: true);
+            return (exerciseTimes: result, ifNeedExercise: true);
         }
         
         Logger.Warn("不合法的锻炼次数！");

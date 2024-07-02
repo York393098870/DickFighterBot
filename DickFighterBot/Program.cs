@@ -150,6 +150,9 @@ public class WebSocketClient
 
                             if (groupMessage.raw_message.Contains("锻炼牛子"))
                             {
+                                await DickExercise.IfNeedExercise(rawMessage: groupMessage.raw_message,
+                                    user_id: groupMessage.user_id,
+                                    group_id: groupMessage.group_id);
                             }
                         }
 
