@@ -6,27 +6,37 @@ namespace DickFighterBot.Functions;
 
 public class ChangeDickName
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger(); //获取日志记录器
+
     public static async Task Main(long user_id, long group_id, string rawMessage)
     {
         var (newName, ifNeedEdit) = 正则表达式.改牛子名(rawMessage);
-        var (item1, newDick) =
+        var (dickExisted, newDick) =
             await DickFighterDataBase.CheckPersonalDick(user_id,
                 group_id);
 
         if (ifNeedEdit)
         {
             string stringMessage;
-            if (item1)
+            if (dickExisted)
             {
                 //如果需要修改名字并且有牛子
-                stringMessage = $"[CQ:at,qq={user_id}]，你的牛子名字已经修改为[{newName}]！";
-                await DickFighterDataBase.UpdateDickNickName(user_id, group_id, newName);
+                var changeResult = await DickFighterDataBase.UpdateDickNickName(user_id, group_id, newName);
+                if (changeResult)
+                {
+                    stringMessage = $"用户[CQ:at,qq={user_id}]，你的牛子名字已经修改为[{newName}]！";
+                    Logger.Info($"群{group_id}当中的用户{user_id}修改了牛子昵称，新昵称为：{newName}");
+                }
+                else
+                {
+                    stringMessage = $"用户[CQ:at,qq={user_id}]，你的牛子名字修改失败！请稍后再试！";
+                    Logger.Error($"群{group_id}当中的用户{user_id}修改牛子昵称失败！");
+                }
             }
             else
             {
-                stringMessage = $"[CQ:at,qq={user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
+                stringMessage = TipsMessage.DickNotFound(user_id);
             }
-
             await WebSocketClient.SendMessage(SendGroupMessage.Generate(stringMessage, group_id));
         }
     }

@@ -2,6 +2,7 @@
 
 public class Message
 {
+    // This class is used to deserialize the JSON message sent by the WebSocket server.
     public class GroupMessage
     {
         public long time { get; set; }

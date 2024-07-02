@@ -14,7 +14,7 @@ public class WebSocketClient
     private static ClientWebSocket clientWebSocket;
     private static string databaseFolderPath;
 
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger(); //获取日志记录器
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
 
     public static async Task Main()
@@ -117,7 +117,7 @@ public class WebSocketClient
                     }
                     case "锻炼牛子":
                     {
-                        await Exercise.Main(groupMessage.user_id, groupMessage.group_id);
+                        await DickExercise.TryExercise(groupMessage.user_id, groupMessage.group_id);
                         break;
                     }
                     case "润滑度":
@@ -137,10 +137,21 @@ public class WebSocketClient
                     }
                     default:
                     {
-                        if (groupMessage.raw_message != null && groupMessage.raw_message.Contains("改牛子名"))
-                            await ChangeDickName.Main(groupMessage.user_id,
-                                groupMessage.group_id,
-                                groupMessage.raw_message);
+                        if (groupMessage.raw_message != null)
+                        {
+                            //不是空消息
+
+                            if (groupMessage.raw_message.Contains("改牛子名"))
+                            {
+                                await ChangeDickName.Main(groupMessage.user_id,
+                                    groupMessage.group_id,
+                                    groupMessage.raw_message);
+                            }
+
+                            if (groupMessage.raw_message.Contains("锻炼牛子"))
+                            {
+                            }
+                        }
 
                         break;
                     }

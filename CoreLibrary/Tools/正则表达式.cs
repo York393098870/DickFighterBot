@@ -1,12 +1,14 @@
 ﻿using System.Text.RegularExpressions;
+using NLog;
 
 namespace CoreLibrary.Tools;
 
 public class 正则表达式
 {
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
+
     public static (string? newName, bool ifNeedEdit) 改牛子名(string input)
     {
-        // 定义正则表达式模式
         const string pattern = @"^改牛子名\s*(.*)$";
 
         // 使用正则表达式匹配输入字符串
@@ -14,10 +16,30 @@ public class 正则表达式
 
         // 检查匹配结果
         if (match.Success)
-            // 提取括号内的内容并返回
+            
             return (newName: match.Groups[1].Value, ifNeedEdit: true);
-
-        // 如果不匹配，则不返回任何内容
+        
         return (newName: null, ifNeedEdit: false);
+    }
+
+    public static (int? exerciseTimes, bool ifNeedExercise) 锻炼牛子(string input)
+    {
+        const string pattern = @"^锻炼牛子(\d+)次$";
+
+        // 使用正则表达式匹配输入字符串
+        var match = Regex.Match(input, pattern);
+
+        // 检查匹配结果
+        if (!match.Success) return (exerciseTimes: null, ifNeedExercise: false);
+        
+        var exerciseTimes = int.Parse(match.Groups[1].Value);
+        
+        if (exerciseTimes > 0)
+        {
+            return (exerciseTimes, ifNeedExercise: true);
+        }
+        
+        Logger.Warn("不合法的锻炼次数！");
+        return (exerciseTimes: null, ifNeedExercise: false);
     }
 }

@@ -27,7 +27,7 @@ public class CheckMyDick
         }
         else
         {
-            stringMessage = $"用户[CQ:at,qq={user_id}]，你还没有牛子！请使用“生成牛子”指令，生成一只牛子。";
+            stringMessage = CoreLibrary.Tools.TipsMessage.DickNotFound(user_id);
         }
 
         await WebSocketClient.SendMessage(SendGroupMessage.Generate(stringMessage, group_id));
