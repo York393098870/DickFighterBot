@@ -164,19 +164,16 @@ public partial class DickFighterDataBase
         await using var reader = await command.ExecuteReaderAsync();
 
 
-        if (await reader.ReadAsync())
-        {
-            var energyLastUpdate = Convert.ToInt64(reader["EnergyLastUpdate"]);
-            var energyLastUpdateTime = Convert.ToInt64(reader["EnergyLastUpdateTime"]);
+        if (!await reader.ReadAsync()) throw new Exception("未查询到你的牛子数据！");
+        var energyLastUpdate = Convert.ToInt64(reader["EnergyLastUpdate"]);
+        var energyLastUpdateTime = Convert.ToInt64(reader["EnergyLastUpdateTime"]);
 
-            var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            var timeDifference = currentTime - energyLastUpdateTime;
+        var currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        var timeDifference = currentTime - energyLastUpdateTime;
 
-            var energyNow = Convert.ToInt32(energyLastUpdate + timeDifference / (6 * 60));
-            return energyNow;
-        }
+        var energyNow = Convert.ToInt32(energyLastUpdate + timeDifference / (6 * 60));
+        return energyNow;
 
-        throw new Exception("未查询到你的牛子数据！");
     }
 
     public static async Task<bool> UpdateDickEnergy(int energy, string guid)

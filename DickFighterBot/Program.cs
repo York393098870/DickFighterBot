@@ -78,7 +78,7 @@ public class WebSocketClient
 
     private static async Task ReceiveMessages()
     {
-        var buffer = new byte[1024];
+        var buffer = new byte[2048];
         while (clientWebSocket.State == WebSocketState.Open)
         {
             var result =

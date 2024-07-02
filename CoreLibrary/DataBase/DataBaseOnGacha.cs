@@ -4,7 +4,7 @@ namespace CoreLibrary.DataBase;
 
 public partial class DickFighterDataBase
 {
-    public static async Task CheckGachaInfo(string GUID)
+    public static async Task<(int gachaTickets, int dickType, int weaponType)> CheckGachaInfo(string guid)
     {
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
         await connection.OpenAsync();
@@ -12,31 +12,49 @@ public partial class DickFighterDataBase
         {
             CommandText = "SELECT * FROM GachaInformation WHERE GUID = @GUID"
         };
-        command.Parameters.AddWithValue("@GUID", GUID);
+        command.Parameters.AddWithValue("@GUID", guid);
         await using var reader = await command.ExecuteReaderAsync();
-
         if (await reader.ReadAsync())
         {
-            // GachaInformation exists
+            //存在相关记录，直接返回数据
+
+            return (gachaTickets: Convert.ToInt32(reader["GachaTickets"]),
+                dickType: Convert.ToInt32(reader["DickType"]),
+                weaponType: Convert.ToInt32(reader["WeaponType"]));
         }
         else
         {
             //自动初始化一条记录
+            var initializeResult = await InitializeGachaInfoForNewDick(guid);
+            if (initializeResult)
+            {
+                Logger.Info("没有查询到该牛子的抽卡信息，正在初始化...");
+                return (gachaTickets: 2, dickType: 0, weaponType: 0);
+            }
+            else
+            {
+                Logger.Error("初始化抽卡信息失败！无法为新牛子插入初始记录！");
+                throw new Exception("检查牛子信息时发生致命错误！");
+            }
+            
         }
     }
 
-    public static async Task InitializeGachaInfoForNewDick(string GUID)
+    public static async Task<bool> InitializeGachaInfoForNewDick(string guid)
     {
+        //为新牛子在数据库当中生成一条初始记录
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
         await connection.OpenAsync();
         var command = new SQLiteCommand(connection)
         {
-            CommandText = "INSERT INTO GachaInformation (GUID, GachaTicket,DickType,WeaponType) VALUES (@GUID, 2, 0, 0)"
+            CommandText =
+                "INSERT INTO GachaInformation (GUID,GachaTickets,DickType,WeaponType) VALUES (@GUID, 2, 0, 0)"
         };
-        command.Parameters.AddWithValue("@GUID", GUID);
+        command.Parameters.AddWithValue("@GUID", guid);
         await command.ExecuteNonQueryAsync();
-        
+
         var rowsAffected = await command.ExecuteNonQueryAsync();
-        /*return rowsAffected > 0;*/
+
+        return rowsAffected > 0;
     }
 }

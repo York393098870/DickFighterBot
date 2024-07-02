@@ -4,7 +4,6 @@ public class Dick
 {
     private int _energy;
 
-    //
     public Dick(long belongings, string? nickName, int gender, double length, string? guid)
     {
         Belongings = belongings;
@@ -23,6 +22,12 @@ public class Dick
     public double Length { get; set; }
 
     public string? GUID { get; set; }
+
+    public int GachaTickets { get; set; }
+
+    public int DickType { get; set; }
+
+    public int WeaponType { get; set; }
 
     public int Energy
     {
