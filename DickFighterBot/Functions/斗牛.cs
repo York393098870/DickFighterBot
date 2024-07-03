@@ -1,6 +1,7 @@
 ﻿using CoreLibrary;
 using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
+using CoreLibrary.Tools;
 
 namespace DickFighterBot.Functions;
 
@@ -8,7 +9,8 @@ public class 斗牛
 {
     public static async Task Main(long user_id, long group_id)
     {
-        string stringMessage;
+        string outputMessage;
+        const int energyCost = 40;
         var (item1, challengerDick) =
             await DickFighterDataBase.CheckPersonalDick(user_id,
                 group_id);
@@ -16,10 +18,10 @@ public class 斗牛
         {
             challengerDick.Energy = await DickFighterDataBase.CheckEnergy(challengerDick.GUID);
             var currentEnergy = challengerDick.Energy;
-            if (currentEnergy >= 40)
+            if (currentEnergy >= energyCost)
             {
                 //体力充足，扣取体力以后决斗
-                challengerDick.Energy -= 40;
+                challengerDick.Energy -= energyCost;
                 await DickFighterDataBase.UpdateDickEnergy(challengerDick.Energy,
                     challengerDick.GUID);
 
@@ -32,7 +34,6 @@ public class 斗牛
                         defenderDick.Length, 0, challengerDick.Length - defenderDick.Length);
                     var stringMessage1 =
                         $"用户[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，消耗40点体力，向 {defenderDick.Belongings}的牛子“{defenderDick.NickName}” 发起了斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
-                    string stringMessage2;
 
                     //更新牛子长度
                     challengerDick.Length += battleResult.challengerChange;
@@ -42,31 +43,28 @@ public class 斗牛
                     await DickFighterDataBase.UpdateDickLength(defenderDick.Length,
                         defenderDick.GUID);
 
-                    if (battleResult.isWin)
-                        stringMessage2 =
-                            $"你的牛子“{challengerDick.NickName}”在斗牛当中获得了胜利！长度增加了{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F1}cm。对方牛子“{defenderDick.NickName}”长度变化为{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F1}cm。";
-                    else
-                        stringMessage2 =
-                            $"你的牛子“{challengerDick.NickName}”在斗牛当中遗憾地失败！长度变化为{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F1}cm。对方牛子“{defenderDick.NickName}”长度增加了{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F1}cm";
+                    var stringMessage2 = battleResult.isWin
+                        ? $"你的牛子“{challengerDick.NickName}”在斗牛当中获得了胜利！长度增加了{battleResult.challengerChange:F3}cm，目前长度为{challengerDick.Length:F1}cm。对方牛子“{defenderDick.NickName}”长度变化为{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F1}cm。"
+                        : $"你的牛子“{challengerDick.NickName}”在斗牛当中遗憾地失败！长度缩短了{Math.Abs(battleResult.challengerChange):F3}cm，目前长度为{challengerDick.Length:F1}cm。对方牛子“{defenderDick.NickName}”长度增加了{battleResult.defenderChange:F3}cm，目前长度为{defenderDick.Length:F1}cm";
 
-                    stringMessage = stringMessage1 + stringMessage2;
+                    outputMessage = stringMessage1 + stringMessage2;
                 }
                 else
                 {
-                    stringMessage = $"用户[CQ:at,qq={user_id}]，群内没有其他牛子！快邀请一只牛子进群吧！";
+                    outputMessage = $"用户[CQ:at,qq={user_id}]，群内没有其他牛子！快邀请一只牛子进群吧！";
                 }
             }
             else
             {
-                stringMessage =
-                    $"用户{user_id}，你的牛子“{challengerDick.NickName}”，体力值不足，无法斗牛！当前体力值为{currentEnergy}/240";
+                outputMessage =
+                    $"用户[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，体力值不足，无法斗牛！当前体力值为{currentEnergy}/240";
             }
         }
         else
         {
-            stringMessage = CoreLibrary.Tools.TipsMessage.DickNotFound(user_id);
+            outputMessage = TipsMessage.DickNotFound(user_id);
         }
 
-        await WebSocketClient.SendMessage(SendGroupMessage.Generate(stringMessage, group_id));
+        await WebSocketClient.SendMessage(SendGroupMessage.Generate(outputMessage, group_id));
     }
 }

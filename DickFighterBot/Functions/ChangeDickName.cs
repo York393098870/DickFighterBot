@@ -1,12 +1,13 @@
 ﻿using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
+using NLog;
 
 namespace DickFighterBot.Functions;
 
 public class ChangeDickName
 {
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger(); //获取日志记录器
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
     public static async Task Main(long user_id, long group_id, string rawMessage)
     {
@@ -37,6 +38,7 @@ public class ChangeDickName
             {
                 stringMessage = TipsMessage.DickNotFound(user_id);
             }
+
             await WebSocketClient.SendMessage(SendGroupMessage.Generate(stringMessage, group_id));
         }
     }

@@ -1,10 +1,11 @@
 ﻿using System.Data.SQLite;
+using NLog;
 
 namespace CoreLibrary.DataBase;
 
 public partial class DickFighterDataBase
 {
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger(); //获取日志记录器
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
     public static async Task InitializeDataBase()
     {
@@ -173,7 +174,6 @@ public partial class DickFighterDataBase
 
         var energyNow = Convert.ToInt32(energyLastUpdate + timeDifference / (6 * 60));
         return energyNow;
-
     }
 
     public static async Task<bool> UpdateDickEnergy(int energy, string guid)

@@ -59,7 +59,9 @@ public class WebSocketClient
         }
         catch (Exception ex)
         {
-            Logger.Error("WebSocket服务器连接失败，错误信息：" + ex.Message);
+            Logger.Fatal("主程序出现致命错误：" + ex.Message);
+            Logger.Fatal("错误详情：" + ex.StackTrace);
+            Logger.Info("按任意键退出程序。");
             Console.ReadKey();
         }
         finally
@@ -73,12 +75,12 @@ public class WebSocketClient
         var messageBytes = Encoding.UTF8.GetBytes(message);
         await clientWebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true,
             CancellationToken.None);
-        await Task.Delay(5000);
+        await Task.Delay(2500);
     }
 
     private static async Task ReceiveMessages()
     {
-        var buffer = new byte[2048];
+        var buffer = new byte[4096];
         while (clientWebSocket.State == WebSocketState.Open)
         {
             var result =
@@ -142,18 +144,14 @@ public class WebSocketClient
                             //不是空消息
 
                             if (groupMessage.raw_message.Contains("改牛子名"))
-                            {
                                 await ChangeDickName.Main(groupMessage.user_id,
                                     groupMessage.group_id,
                                     groupMessage.raw_message);
-                            }
 
                             if (groupMessage.raw_message.Contains("锻炼牛子"))
-                            {
-                                await DickExercise.IfNeedExercise(rawMessage: groupMessage.raw_message,
-                                    user_id: groupMessage.user_id,
-                                    group_id: groupMessage.group_id);
-                            }
+                                await DickExercise.IfNeedExercise(groupMessage.raw_message,
+                                    groupMessage.user_id,
+                                    groupMessage.group_id);
                         }
 
                         break;

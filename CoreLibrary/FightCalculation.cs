@@ -9,9 +9,9 @@ public class FightCalculation
     //士气取决于最近三场战斗的胜负情况，胜利则士气+1，失败则士气-1
     //士气太低的牛子遭受攻击时，会触发Buff“背水一战”，胜利概率大幅度提升！
     //以上均为完整代码的情况，我想到了一个绝妙的办法，可以让功能更加完善，但是这里空白太小了，写不下
-    
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger(); //获取日志记录器
-    
+
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
+
     public static (bool isWin, double challengerChange, double defenderChange, double winRatePct) Calculate(
         double challengerLength,
         double defenderLength, int morale, double differenceValue)
@@ -27,18 +27,18 @@ public class FightCalculation
             //挑战成功的逻辑
 
             Logger.Info("牛子对决当中获得了胜利！");
-            var challengerChangeWhenWin = Math.Abs(differenceValueRate) * GenerateRandom.GetRandomDouble(0.2, 0.4) +
-                                          GenerateRandom.GetRandomDouble(0, 10);
-            var defenderChangeWhenLose = -Math.Abs(differenceValueRate) * GenerateRandom.GetRandomDouble(0.1, 0.3) -
+            var challengerChangeWhenWin = Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.1, 0.4) +
+                                          GenerateRandom.GetRandomDouble(5, 15);
+            var defenderChangeWhenLose = -Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.05, 0.2) -
                                          GenerateRandom.GetRandomDouble(0, 10);
             return (isWin: boolResult, challengerChange: challengerChangeWhenWin,
                 defenderChange: defenderChangeWhenLose, winRatePct);
         }
 
         Logger.Info("牛子对决当中遗憾地失败了！");
-        var challengerChangeWhenLose = -Math.Abs(differenceValueRate) * GenerateRandom.GetRandomDouble(0.2, 0.4) -
-                                       GenerateRandom.GetRandomDouble(0, 10);
-        var defenderChangeWhenWin = Math.Abs(differenceValueRate) * GenerateRandom.GetRandomDouble(0.1, 0.3) +
+        var challengerChangeWhenLose = -Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.1, 0.4) -
+                                       GenerateRandom.GetRandomDouble(5, 15);
+        var defenderChangeWhenWin = Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.05, 0.2) +
                                     GenerateRandom.GetRandomDouble(0, 10);
 
         return (isWin: boolResult, challengerChange: challengerChangeWhenLose,
