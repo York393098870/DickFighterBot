@@ -2,6 +2,7 @@
 using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
+#pragma warning disable CS8602 // 解引用可能出现空引用。
 
 namespace DickFighterBot.Functions;
 
@@ -11,12 +12,13 @@ public class 斗牛
     {
         string outputMessage;
         const int energyCost = 40;
-        var (item1, challengerDick) =
+        var (dickExisted, challengerDick) =
             await DickFighterDataBase.CheckPersonalDick(user_id,
                 group_id);
-        if (item1)
+        if (dickExisted)
         {
             challengerDick.Energy = await DickFighterDataBase.CheckEnergy(challengerDick.GUID);
+
             var currentEnergy = challengerDick.Energy;
             if (currentEnergy >= energyCost)
             {
