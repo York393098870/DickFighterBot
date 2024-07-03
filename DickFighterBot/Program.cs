@@ -5,6 +5,7 @@ using System.Xml;
 using CoreLibrary;
 using CoreLibrary.DataBase;
 using DickFighterBot.Functions;
+using DickFighterBot.Functions.DickGacha;
 using NLog;
 
 namespace DickFighterBot;
@@ -132,9 +133,10 @@ public class WebSocketClient
                         await 斗牛.Main(groupMessage.user_id, groupMessage.group_id);
                         break;
                     }
-                    case "牛子抽卡":
+                    case "牛子卡池":
                     {
                         //Todo: 牛子抽卡
+                        await GachaPool.Show(group_id: groupMessage.group_id);
                         break;
                     }
                     default:

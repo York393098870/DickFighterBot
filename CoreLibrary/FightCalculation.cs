@@ -21,10 +21,9 @@ public class FightCalculation
 
         var boolResult = GenerateRandom.GetRandomDouble() < winRate; //判定胜负
 
+        //核心算法部分
         if (boolResult)
         {
-            //挑战成功的逻辑
-
             Logger.Info("发起了一场随机牛子对决！挑战方获得了胜利！");
             var challengerChangeWhenWin = Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.05, 0.15) +
                                           GenerateRandom.GetRandomDouble(5, 15);
