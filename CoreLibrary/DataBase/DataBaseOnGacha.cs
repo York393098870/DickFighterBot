@@ -15,29 +15,21 @@ public partial class DickFighterDataBase
         command.Parameters.AddWithValue("@GUID", guid);
         await using var reader = await command.ExecuteReaderAsync();
         if (await reader.ReadAsync())
-        {
             //存在相关记录，直接返回数据
-
             return (gachaTickets: Convert.ToInt32(reader["GachaTickets"]),
                 dickType: Convert.ToInt32(reader["DickType"]),
                 weaponType: Convert.ToInt32(reader["WeaponType"]));
-        }
-        else
+
+        //自动初始化一条记录
+        var initializeResult = await InitializeGachaInfoForNewDick(guid);
+        if (initializeResult)
         {
-            //自动初始化一条记录
-            var initializeResult = await InitializeGachaInfoForNewDick(guid);
-            if (initializeResult)
-            {
-                Logger.Info("没有查询到该牛子的抽卡信息，正在初始化...");
-                return (gachaTickets: 2, dickType: 0, weaponType: 0);
-            }
-            else
-            {
-                Logger.Error("初始化抽卡信息失败！无法为新牛子插入初始记录！");
-                throw new Exception("检查牛子信息时发生致命错误！");
-            }
-            
+            Logger.Info("没有查询到该牛子的抽卡信息，正在初始化...");
+            return (gachaTickets: 2, dickType: 0, weaponType: 0);
         }
+
+        Logger.Error("初始化抽卡信息失败！无法为新牛子插入初始记录！");
+        throw new Exception("检查牛子信息时发生致命错误！");
     }
 
     public static async Task<bool> InitializeGachaInfoForNewDick(string guid)

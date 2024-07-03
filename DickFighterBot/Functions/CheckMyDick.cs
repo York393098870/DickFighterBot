@@ -1,5 +1,6 @@
 ﻿using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
+using CoreLibrary.Tools;
 
 namespace DickFighterBot.Functions;
 
@@ -27,7 +28,7 @@ public class CheckMyDick
         }
         else
         {
-            stringMessage = CoreLibrary.Tools.TipsMessage.DickNotFound(user_id);
+            stringMessage = TipsMessage.DickNotFound(user_id);
         }
 
         await WebSocketClient.SendMessage(SendGroupMessage.Generate(stringMessage, group_id));

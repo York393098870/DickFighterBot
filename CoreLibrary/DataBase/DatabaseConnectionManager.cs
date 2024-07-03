@@ -1,9 +1,11 @@
-﻿namespace CoreLibrary.DataBase;
+﻿using NLog;
+
+namespace CoreLibrary.DataBase;
 
 public static class DatabaseConnectionManager
 {
     private static string _connectionString;
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger(); //获取日志记录器
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
     public static string ConnectionString
     {

@@ -9,9 +9,9 @@ public class FightCalculation
     //士气取决于最近三场战斗的胜负情况，胜利则士气+1，失败则士气-1
     //士气太低的牛子遭受攻击时，会触发Buff“背水一战”，胜利概率大幅度提升！
     //以上均为完整代码的情况，我想到了一个绝妙的办法，可以让功能更加完善，但是这里空白太小了，写不下
-    
-    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger(); //获取日志记录器
-    
+
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
+
     public static (bool isWin, double challengerChange, double defenderChange, double winRatePct) Calculate(
         double challengerLength,
         double defenderLength, int morale, double differenceValue)

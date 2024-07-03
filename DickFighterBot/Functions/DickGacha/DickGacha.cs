@@ -12,11 +12,7 @@ public class DickGacha
         if (DickInfo.ifExisted)
         {
             //牛子存在，检查抽卡道具（专票）是否足够
-            
         }
-        else
-        {
-            //生成牛子
-        }
+        //生成牛子
     }
 }
