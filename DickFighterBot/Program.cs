@@ -140,7 +140,7 @@ public class WebSocketClient
                     }
                     case "全服牛子榜":
                     {
-                        await GlobalRank.GetRank(groupMessage.group_id);
+                        await DickRank.GetGlobalRank(groupMessage.group_id);
                         break;
                     }
                     default:
