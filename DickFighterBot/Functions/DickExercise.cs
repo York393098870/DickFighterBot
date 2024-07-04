@@ -26,13 +26,13 @@ public class DickExercise
 
         //查询是否已经存在牛子
         var (dickExisted, newDick) =
-            await DickFighterDataBase.CheckPersonalDick(user_id,
+            await DickFighterDataBase.CheckDickWithTwoId(user_id,
                 group_id);
         if (dickExisted)
         {
             var energyCost = exercisePerCost * exerciseTimes;
             //检查体力值是否足够
-            newDick.Energy = await DickFighterDataBase.CheckEnergy(newDick.GUID);
+            newDick.Energy = await DickFighterDataBase.CheckDickEnergyWithGuid(newDick.GUID);
             var currentEnergy = newDick.Energy;
 
             var tipsMessage = $"你可以使用指令“锻炼牛子X次”来快速锻炼牛子，每次锻炼消耗{exercisePerCost}体力值。";

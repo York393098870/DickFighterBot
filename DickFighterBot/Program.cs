@@ -6,6 +6,7 @@ using CoreLibrary;
 using CoreLibrary.DataBase;
 using DickFighterBot.Functions;
 using DickFighterBot.Functions.DickGacha;
+using DickFighterBot.Functions.Rank;
 using NLog;
 
 namespace DickFighterBot;
@@ -90,8 +91,6 @@ public class WebSocketClient
             var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
             Logger.Trace("收到消息：" + receivedMessage);
 
-            /*if (result.MessageType != WebSocketMessageType.Text) continue;*/
-
             try
             {
                 var groupMessage = JsonSerializer.Deserialize<Message.GroupMessage>(receivedMessage); //反序列化收到的消息
@@ -136,7 +135,12 @@ public class WebSocketClient
                     case "牛子卡池":
                     {
                         //Todo: 牛子抽卡
-                        await GachaPool.Show(group_id: groupMessage.group_id);
+                        await GachaPool.Show(groupMessage.group_id);
+                        break;
+                    }
+                    case "全服牛子榜":
+                    {
+                        await GlobalRank.GetRank(groupMessage.group_id);
                         break;
                     }
                     default:

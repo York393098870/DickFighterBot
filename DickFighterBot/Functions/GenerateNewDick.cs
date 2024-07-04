@@ -11,7 +11,7 @@ public class GenerateNewDick
     {
         //判断是否已经有了牛子
         var checkResult =
-            await DickFighterDataBase.CheckPersonalDick(user_id,
+            await DickFighterDataBase.CheckDickWithTwoId(user_id,
                 group_id);
         var ifExist = checkResult.Item1;
 

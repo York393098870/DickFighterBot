@@ -7,7 +7,7 @@ public class DickGacha
     public async Task Main(long user_id, long group_id)
     {
         //首先判定是否有牛子
-        var DickInfo = await DickFighterDataBase.CheckPersonalDick(user_id, group_id);
+        var DickInfo = await DickFighterDataBase.CheckDickWithTwoId(user_id, group_id);
         string Message;
         if (DickInfo.ifExisted)
         {

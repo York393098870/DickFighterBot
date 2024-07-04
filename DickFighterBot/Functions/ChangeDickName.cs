@@ -13,7 +13,7 @@ public class ChangeDickName
     {
         var (newName, ifNeedEdit) = 正则表达式.改牛子名(rawMessage);
         var (dickExisted, newDick) =
-            await DickFighterDataBase.CheckPersonalDick(user_id,
+            await DickFighterDataBase.CheckDickWithTwoId(user_id,
                 group_id);
 
         if (ifNeedEdit)

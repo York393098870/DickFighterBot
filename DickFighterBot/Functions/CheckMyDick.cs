@@ -12,11 +12,11 @@ public class CheckMyDick
 
         //查询是否已经存在牛子
         var (dickExisted, newDick) =
-            await DickFighterDataBase.CheckPersonalDick(user_id,
+            await DickFighterDataBase.CheckDickWithTwoId(user_id,
                 group_id);
         if (dickExisted)
         {
-            newDick.Energy = await DickFighterDataBase.CheckEnergy(newDick.GUID);
+            newDick.Energy = await DickFighterDataBase.CheckDickEnergyWithGuid(newDick.GUID);
 
             //计算排名
             var ranks = await DickFighterDataBase.GetLengthRanks(newDick.GUID, group_id);
