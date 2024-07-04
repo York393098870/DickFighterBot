@@ -49,7 +49,7 @@ public partial class DickFighterDataBase
 
     public async Task<List<Dick>> GetFirstNDicksByOrder(int n, int order = 0)
     {
-        //根据给定的排序方式，返回数据库中的前n个牛子
+        //根据给定的排序方式，返回数据库中的前n个牛子（或者后n个）
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
         await connection.OpenAsync();
 
@@ -98,7 +98,7 @@ public partial class DickFighterDataBase
 
     public async Task<List<Dick>> GetFirstNDicksByOrder(int n, long group_id, int order = 0)
     {
-        //根据给定的排序方式，返回指定群中的前n个牛子
+        //根据给定的排序方式，返回指定群中的前n个牛子（或者后n个）
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
         await connection.OpenAsync();
 

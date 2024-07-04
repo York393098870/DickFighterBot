@@ -6,7 +6,7 @@ namespace DickFighterBot.Functions;
 
 public class DickExercise
 {
-    private static readonly int exercisePerCost = 30;
+    private static readonly int exercisePerCost = 10;
 
     public static async Task TryExercise(long user_id, long group_id, int exerciseTimes = 1)
     {
@@ -41,7 +41,7 @@ public class DickExercise
             {
                 var newEnergy = currentEnergy - energyCost;
                 await DickFighterDataBase.UpdateDickEnergy(guid: newDick.GUID, energy: newEnergy);
-                var lengthDifference = GenerateRandom.GetRandomDouble(-5, 10) * exerciseTimes;
+                var lengthDifference = GenerateRandom.GetRandomDouble(-5, 15) * exerciseTimes;
                 newDick.Length += lengthDifference;
                 await DickFighterDataBase.UpdateDickLength(newDick.Length, newDick.GUID);
 

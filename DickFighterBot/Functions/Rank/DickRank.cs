@@ -38,7 +38,17 @@ public class DickRank
                 outputMessage += rankMessage;
             }
 
-            Logger.Info("全服最长牛子榜单已生成！");
+            dickList = await dataBase.GetFirstNDicksByOrder(n: dickCount, order: 1); //获取倒数的牛子
+            outputMessage += "\n全服最短牛子榜\n排名|昵称|长度\n";
+
+            for (var i = 1; i <= dickList.Count; i++)
+            {
+                var rankMessage =
+                    $"{i}. 牛子昵称：{dickList[i - 1].NickName}，长度：{dickList[i - 1].Length:F1}cm，主人QQ:{dickList[i - 1].Belongings}\n";
+                outputMessage += rankMessage;
+            }
+
+            Logger.Info("全服牛子榜单已生成！");
         }
 
         await WebSocketClient.SendMessage(SendGroupMessage.Generate(outputMessage, group_id));
@@ -74,7 +84,17 @@ public class DickRank
                 outputMessage += rankMessage;
             }
 
-            Logger.Info($"群{group_id}最长牛子榜单已生成！");
+            dickList = await dataBase.GetFirstNDicksByOrder(n: dickCount, order: 1, group_id: group_id); //获取倒数的牛子
+            outputMessage += "\n群最短牛子榜\n排名|昵称|长度\n";
+
+            for (var i = 1; i <= dickList.Count; i++)
+            {
+                var rankMessage =
+                    $"{i}. 牛子昵称：{dickList[i - 1].NickName}，长度：{dickList[i - 1].Length:F1}cm，主人QQ:{dickList[i - 1].Belongings}\n";
+                outputMessage += rankMessage;
+            }
+
+            Logger.Info($"群{group_id}牛子榜单已生成！");
         }
 
         await WebSocketClient.SendMessage(SendGroupMessage.Generate(outputMessage, group_id));

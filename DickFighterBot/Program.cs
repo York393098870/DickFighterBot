@@ -143,6 +143,11 @@ public class WebSocketClient
                         await DickRank.GetGlobalRank(groupMessage.group_id);
                         break;
                     }
+                    case "群牛子榜":
+                    {
+                        await DickRank.GetGroupRank(groupMessage.group_id);
+                        break;
+                    }
                     default:
                     {
                         if (groupMessage.raw_message != null)
