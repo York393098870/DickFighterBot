@@ -25,19 +25,19 @@ public class FightCalculation
         if (boolResult)
         {
             Logger.Info("发起了一场随机牛子对决！挑战方获得了胜利！");
-            var challengerChangeWhenWin = Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.05, 0.15) +
-                                          GenerateRandom.GetRandomDouble(5, 15);
-            var defenderChangeWhenLose = -Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.1, 0.3) -
-                                         GenerateRandom.GetRandomDouble(0, 10);
+            var challengerChangeWhenWin = Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.1, 0.2) +
+                                          GenerateRandom.GetRandomDouble(10, 20);
+            var defenderChangeWhenLose = -Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.2, 0.4) -
+                                         GenerateRandom.GetRandomDouble(5, 10);
             return (isWin: boolResult, challengerChange: challengerChangeWhenWin,
                 defenderChange: defenderChangeWhenLose, winRatePct);
         }
 
         Logger.Info("发起了一场随机牛子对决！挑战方挑战失败！！");
-        var challengerChangeWhenLose = -Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.1, 0.3) -
-                                       GenerateRandom.GetRandomDouble(5, 15);
-        var defenderChangeWhenWin = Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.05, 0.15) +
-                                    GenerateRandom.GetRandomDouble(0, 10);
+        var challengerChangeWhenLose = -Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.15, 0.3) -
+                                       GenerateRandom.GetRandomDouble(10, 20);
+        var defenderChangeWhenWin = Math.Abs(differenceValue) * GenerateRandom.GetRandomDouble(0.05, 0.1) +
+                                    GenerateRandom.GetRandomDouble(5, 10);
 
         return (isWin: boolResult, challengerChange: challengerChangeWhenLose,
             defenderChange: defenderChangeWhenWin, winRatePct);

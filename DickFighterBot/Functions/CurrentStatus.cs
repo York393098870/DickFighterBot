@@ -14,7 +14,7 @@ public class CurrentStatus
         var hours = uptime.Hours;
         var minutes = uptime.Minutes;
         var seconds = uptime.Seconds;
-        var message = $"牛子系统正常运行！\n已运行时间：{days}天{hours}小时{minutes}分钟{seconds}秒";
+        var message = $"牛子系统正在运行！\n已运行时间：{days}天{hours}小时{minutes}分钟{seconds}秒";
         await WebSocketClient.SendMessage(SendGroupMessage.Generate(message, group_id));
     }
 }
