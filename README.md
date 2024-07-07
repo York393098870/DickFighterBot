@@ -6,7 +6,7 @@ Linux环境推荐使用：**NapCatQQ**
 Windows环境推荐使用：**LLOneBot**
 
 #### 启动及配置
-前往**Releases**界面下载对应平台二进制编译文件，然后解压；在配置文件**config.xml**当中填写**WebSocket服务器地址**，然后直接启动DickFighterBot主程序即可。
+前往**Releases**界面下载对应平台二进制编译文件，然后解压；在配置文件**main.json**当中填写**WebSocket服务器ip**和**端口**，然后直接启动DickFighterBot主程序即可。
 
 ##### Linux环境下，执行：
 ```
