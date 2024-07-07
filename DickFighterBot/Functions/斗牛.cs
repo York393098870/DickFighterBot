@@ -1,4 +1,5 @@
 ﻿using CoreLibrary;
+using CoreLibrary.config;
 using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
@@ -12,24 +13,28 @@ public class 斗牛
     public static async Task Main(long user_id, long group_id)
     {
         string outputMessage;
-        const int energyCost = 40;
+
+        var energyCost = LoadConfig.Load().DickData.FightEnergyCost;
+
+        var dickFighterDataBase = new DickFighterDataBase();
+
         var (dickExisted, challengerDick) =
-            await DickFighterDataBase.CheckDickWithTwoId(user_id,
+            await dickFighterDataBase.CheckDickWithTwoId(user_id,
                 group_id);
         if (dickExisted)
         {
-            challengerDick.Energy = await DickFighterDataBase.CheckDickEnergyWithGuid(challengerDick.GUID);
+            challengerDick.Energy = await dickFighterDataBase.CheckDickEnergyWithGuid(challengerDick.GUID);
 
             var currentEnergy = challengerDick.Energy;
             if (currentEnergy >= energyCost)
             {
                 //体力充足，扣取体力以后决斗
                 challengerDick.Energy -= energyCost;
-                await DickFighterDataBase.UpdateDickEnergy(challengerDick.Energy,
+                await dickFighterDataBase.UpdateDickEnergy(challengerDick.Energy,
                     challengerDick.GUID);
 
                 //查询群内其他人的牛子，随机选择一只牛子进行对战
-                var defenderDick = await DickFighterDataBase.GetRandomDick(group_id,
+                var defenderDick = await dickFighterDataBase.GetRandomDick(group_id,
                     challengerDick.GUID); //防止自己打自己
                 if (defenderDick != null)
                 {
@@ -41,9 +46,9 @@ public class 斗牛
                     //更新牛子长度
                     challengerDick.Length += battleResult.challengerChange;
                     defenderDick.Length += battleResult.defenderChange;
-                    await DickFighterDataBase.UpdateDickLength(challengerDick.Length,
+                    await dickFighterDataBase.UpdateDickLength(challengerDick.Length,
                         challengerDick.GUID);
-                    await DickFighterDataBase.UpdateDickLength(defenderDick.Length,
+                    await dickFighterDataBase.UpdateDickLength(defenderDick.Length,
                         defenderDick.GUID);
 
                     var stringMessage2 = battleResult.isWin

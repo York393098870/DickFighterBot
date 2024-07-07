@@ -12,8 +12,10 @@ public class ChangeDickName
     public static async Task Main(long user_id, long group_id, string rawMessage)
     {
         var (newName, ifNeedEdit) = 正则表达式.改牛子名(rawMessage);
+        var dickFighterDataBase = new DickFighterDataBase();
+
         var (dickExisted, newDick) =
-            await DickFighterDataBase.CheckDickWithTwoId(user_id,
+            await dickFighterDataBase.CheckDickWithTwoId(user_id,
                 group_id);
 
         if (ifNeedEdit)
@@ -22,7 +24,7 @@ public class ChangeDickName
             if (dickExisted)
             {
                 //如果需要修改名字并且有牛子
-                var changeResult = await DickFighterDataBase.UpdateDickNickName(user_id, group_id, newName);
+                var changeResult = await dickFighterDataBase.UpdateDickNickName(user_id, group_id, newName);
                 if (changeResult)
                 {
                     stringMessage = $"用户[CQ:at,qq={user_id}]，你的牛子名字已经修改为[{newName}]！";

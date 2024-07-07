@@ -16,4 +16,10 @@
         <Folder Include="JsonDefinition\"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Config\main.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

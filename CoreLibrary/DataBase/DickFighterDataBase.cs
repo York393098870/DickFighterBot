@@ -25,13 +25,13 @@ public partial class DickFighterDataBase
                                                   GroupNumber INTEGER
                                               );CREATE TABLE IF NOT EXISTS Energy(
                                                   DickGUID TEXT PRIMARY KEY,
-                                                  EnergyLastUpdate INTEGER,EnergyLastUpdateTime INTEGER);CREATE TABLE IF NOT EXISTS GachaInformation(GUID TEXT PRIMARY KEY,DickType INTEGER,WeaponType INTEGER,GachaTickets INTEGER)
+                                                  EnergyLastUpdate INTEGER,EnergyLastUpdateTime INTEGER);CREATE TABLE IF NOT EXISTS GachaInformation(GUID TEXT PRIMARY KEY,DickType INTEGER,WeaponType INTEGER,GachaTickets INTEGER);CREATE TABLE IF NOT EXISTS CoffeeInformation(GUID TEXT PRIMARY KEY,LastDrinkTime INTEGER)
                           """ //创建数据库表
         };
         await command.ExecuteNonQueryAsync();
     }
 
-    public static async Task<bool> GenerateNewDick(long userId, long groupId, Dick newDick)
+    public async Task<bool> GenerateNewDick(long userId, long groupId, Dick newDick)
     {
         //给定指定QQ号和群号以及牛子，在数据库当中写入新的牛子
         try
@@ -88,7 +88,7 @@ public partial class DickFighterDataBase
         }
     }
 
-    public static async Task<bool> UpdateDickNickName(long userId, long groupId, string newNickName)
+    public async Task<bool> UpdateDickNickName(long userId, long groupId, string newNickName)
     {
         // 根据GroupNumber和DickBelongings修改NickName
         try
@@ -118,7 +118,7 @@ public partial class DickFighterDataBase
         }
     }
 
-    public static async Task<bool> UpdateDickEnergy(int energy, string guid)
+    public async Task<bool> UpdateDickEnergy(int energy, string guid)
     {
         // 根据GUID更新体力
         try
@@ -149,7 +149,7 @@ public partial class DickFighterDataBase
         }
     }
 
-    public static async Task<bool> UpdateDickLength(double length, string guid)
+    public async Task<bool> UpdateDickLength(double length, string guid)
     {
         // 根据GUID更新体力
         try
@@ -179,7 +179,7 @@ public partial class DickFighterDataBase
         }
     }
 
-    public static async Task<Dick?> GetRandomDick(long groupid, string guid)
+    public async Task<Dick?> GetRandomDick(long groupid, string guid)
     {
         // 这个方法给定一个groupid和一个excludedGuid，在数据库BasicInformation当中根据groupid随机返回一行数据，并确保返回的数据中不包含与excludedGuid相同GUID的行。
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -215,7 +215,7 @@ public partial class DickFighterDataBase
         return null;
     }
 
-    public static async Task<(int globalRank, int globalTotal, int groupRank, int groupTotal)> GetLengthRanks(
+    public async Task<(int globalRank, int globalTotal, int groupRank, int groupTotal)> GetLengthRanks(
         string guid, long groupNumber)
     {
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);

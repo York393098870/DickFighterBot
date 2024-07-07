@@ -6,7 +6,7 @@ namespace DickFighterBot.Functions;
 
 public class DickExercise
 {
-    private static readonly int exercisePerCost = 10;
+    private static readonly int exercisePerCost = CoreLibrary.config.LoadConfig.Load().DickData.ExerciseEnergyCost;
 
     public static async Task TryExercise(long user_id, long group_id, int exerciseTimes = 1)
     {
@@ -23,16 +23,18 @@ public class DickExercise
             "过度锻炼使你的牛子受到损伤", "在锻炼过程当中，带着镰刀路过的希儿不小心损伤了你的牛子。疼痛使你的牛子瞬间", "在锻炼当中，你遇到了莫娜。她误以为你的牛子是一种妖怪，用魔法攻击了它，这使得你的牛子",
             "在石锤按摩的过程中，诺艾尔不小心用石锤换成了铁锤。这使得你的牛子", "在锻炼过程当中，你的牛子被一只蚊子叮了一口，这使得你的牛子"
         ];
+        
+        var dickFighterDataBase = new DickFighterDataBase();
 
         //查询是否已经存在牛子
         var (dickExisted, newDick) =
-            await DickFighterDataBase.CheckDickWithTwoId(user_id,
+            await dickFighterDataBase.CheckDickWithTwoId(user_id,
                 group_id);
         if (dickExisted)
         {
             var energyCost = exercisePerCost * exerciseTimes;
             //检查体力值是否足够
-            newDick.Energy = await DickFighterDataBase.CheckDickEnergyWithGuid(newDick.GUID);
+            newDick.Energy = await dickFighterDataBase.CheckDickEnergyWithGuid(newDick.GUID);
             var currentEnergy = newDick.Energy;
 
             var tipsMessage = $"你可以使用指令“锻炼牛子X次”来快速锻炼牛子，每次锻炼消耗{exercisePerCost}体力值。";
@@ -40,10 +42,10 @@ public class DickExercise
             if (currentEnergy >= energyCost)
             {
                 var newEnergy = currentEnergy - energyCost;
-                await DickFighterDataBase.UpdateDickEnergy(guid: newDick.GUID, energy: newEnergy);
+                await dickFighterDataBase.UpdateDickEnergy(guid: newDick.GUID, energy: newEnergy);
                 var lengthDifference = GenerateRandom.GetRandomDouble(-5, 15) * exerciseTimes;
                 newDick.Length += lengthDifference;
-                await DickFighterDataBase.UpdateDickLength(newDick.Length, newDick.GUID);
+                await dickFighterDataBase.UpdateDickLength(newDick.Length, newDick.GUID);
 
 
                 if (lengthDifference > 0)

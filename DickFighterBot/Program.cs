@@ -1,8 +1,7 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
-using System.Xml;
-using CoreLibrary;
+using CoreLibrary.config;
 using CoreLibrary.DataBase;
 using DickFighterBot.Functions;
 using DickFighterBot.Functions.DickGacha;
@@ -18,30 +17,15 @@ public class WebSocketClient
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
-
     public static async Task Main()
     {
         await DickFighterDataBase.InitializeDataBase(); //初始化数据库
 
         clientWebSocket = new ClientWebSocket();
 
-        //读取XML配置文件，如果已经存在config.xml文件，则直接读取，否则读取运行目录下的config.xml文件
-        var xmlDocument = new XmlDocument();
-        var configPath = Path.Combine(ProgramPath.MathPath, "config.xml");
-        if (File.Exists(configPath))
-        {
-            xmlDocument.Load(configPath);
-            Logger.Info("检测到本地配置文件，已加载！");
-        }
-        else
-        {
-            xmlDocument.Load("config.xml");
-            Logger.Info("没有检测到本地配置文件，已加载运行目录下默认配置文件！");
-        }
-
-        var addressNode = xmlDocument.SelectSingleNode("/config/server/address");
-        var address = addressNode.InnerText;
-        var fullAddress = $"ws://{address}:3001";
+        //加载配置文件
+        var configFile = LoadConfig.Load();
+        var fullAddress = $"ws://{configFile.MainSettings.ws_host}:{configFile.MainSettings.port}";
         var serverUri = new Uri(fullAddress);
 
         try
@@ -77,7 +61,8 @@ public class WebSocketClient
         var messageBytes = Encoding.UTF8.GetBytes(message);
         await clientWebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true,
             CancellationToken.None);
-        await Task.Delay(2500);
+
+        await Task.Delay(LoadConfig.Load().MainSettings.Interval);
     }
 
     private static async Task ReceiveMessages()

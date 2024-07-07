@@ -9,9 +9,11 @@ public class GenerateNewDick
 {
     public static async Task Main(long user_id, long group_id)
     {
+        var dickFighterDataBase = new DickFighterDataBase();
+
         //判断是否已经有了牛子
         var checkResult =
-            await DickFighterDataBase.CheckDickWithTwoId(user_id,
+            await dickFighterDataBase.CheckDickWithTwoId(user_id,
                 group_id);
         var ifExist = checkResult.Item1;
 
@@ -24,10 +26,10 @@ public class GenerateNewDick
         else
         {
             var newGuid = Guid.NewGuid().ToString();
-            var newDick = new Dick(user_id, "无名牛子", 0,
+            var newDick = new Dick(user_id, "未改名的牛子", 0,
                 GenerateRandom.GetRandomDouble(5d, 15d), newGuid);
 
-            await DickFighterDataBase.GenerateNewDick(user_id, group_id,
+            await dickFighterDataBase.GenerateNewDick(user_id, group_id,
                 newDick);
 
             stringMessage =

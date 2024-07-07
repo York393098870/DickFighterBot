@@ -19,9 +19,9 @@ public static class DatabaseConnectionManager
 
     private static void InitializeConnectionString()
     {
-        if (!Directory.Exists(ProgramPath.MathPath)) Directory.CreateDirectory(ProgramPath.MathPath);
+        if (!Directory.Exists(ProgramPath.LocalProgramPath)) Directory.CreateDirectory(ProgramPath.LocalProgramPath);
 
-        var dataBaseSource = Path.Combine(ProgramPath.MathPath, "dickfightdatabase.db");
+        var dataBaseSource = Path.Combine(ProgramPath.LocalProgramPath, "dickfightdatabase.db");
         _connectionString = $"Data Source={dataBaseSource};Version=3;";
         Logger.Info($"SQLite数据库已连接！文件路径：{dataBaseSource}");
     }

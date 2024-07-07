@@ -4,7 +4,7 @@ namespace CoreLibrary.DataBase;
 
 public partial class DickFighterDataBase
 {
-    public static async Task<(bool ifExisted, Dick? dick)> CheckDickWithTwoId(long userId, long groupId)
+    public async Task<(bool ifExisted, Dick? dick)> CheckDickWithTwoId(long userId, long groupId)
     {
         //给定指定QQ号和群号，查询牛子是否存在并返回结果
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -35,7 +35,7 @@ public partial class DickFighterDataBase
         return (ifExisted: false, dick);
     }
 
-    public static async Task<int> CheckDickEnergyWithGuid(string guid)
+    public async Task<int> CheckDickEnergyWithGuid(string guid)
     {
         //给定指定QQ号和群号，查询牛子的体力值
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
