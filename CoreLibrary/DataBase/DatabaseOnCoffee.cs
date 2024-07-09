@@ -25,11 +25,9 @@ public partial class DickFighterDataBase
             {
                 return (false, -1);
             }
-            else
-            {
-                var timeResult = Convert.ToInt64(reader["LastDrinkTime"]);
-                return (true, timeResult);
-            }
+
+            var timeResult = Convert.ToInt64(reader["LastDrinkTime"]);
+            return (true, timeResult);
         }
         catch (Exception e)
         {

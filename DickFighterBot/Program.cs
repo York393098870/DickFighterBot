@@ -114,9 +114,15 @@ public class WebSocketClient
                     }
                     case "斗牛":
                     {
-                        await 斗牛.Main(groupMessage.user_id, groupMessage.group_id);
+                        await 斗牛.FightInGroup(groupMessage.user_id, groupMessage.group_id);
                         break;
                     }
+                    case "跨服斗牛":
+                    {
+                        await 斗牛.Fight(groupMessage.user_id, groupMessage.group_id);
+                        break;
+                    }
+
                     case "牛子卡池":
                     {
                         //Todo: 牛子抽卡
@@ -131,6 +137,11 @@ public class WebSocketClient
                     case "群牛子榜":
                     {
                         await DickRank.GetGroupRank(groupMessage.group_id);
+                        break;
+                    }
+                    case "牛子咖啡":
+                    {
+                        await Coffee.DrinkCoffee(groupMessage.user_id, groupMessage.group_id);
                         break;
                     }
                     default:

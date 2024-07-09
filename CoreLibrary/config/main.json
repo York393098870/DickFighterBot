@@ -7,5 +7,9 @@
   "DickData": {
     "FightEnergyCost": 40,
     "ExerciseEnergyCost": 10
+  },
+  "Rank": {
+    "GroupRankTopCount": 2,
+    "GlobalRankTopCount": 3
   }
 }

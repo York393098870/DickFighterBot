@@ -11,6 +11,7 @@ public class LoadConfig
     {
         public MainSettings MainSettings { get; set; }
         public DickData DickData { get; set; }
+        public Rank Rank { get; set; }
     }
 
     public class MainSettings
@@ -26,9 +27,15 @@ public class LoadConfig
         public int FightEnergyCost { get; set; }
     }
 
+    public class Rank
+    {
+        public int GroupRankTopCount { get; set; }
+        public int GlobalRankTopCount { get; set; }
+    }
+
     private static string? _path;
 
-    public static string LocalProgramPath
+    private static string LocalProgramPath
     {
         get
         {

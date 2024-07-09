@@ -1,4 +1,5 @@
-﻿using CoreLibrary.DataBase;
+﻿using CoreLibrary.config;
+using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
 
@@ -6,11 +7,12 @@ namespace DickFighterBot.Functions;
 
 public class DickExercise
 {
-    private static readonly int exercisePerCost = CoreLibrary.config.LoadConfig.Load().DickData.ExerciseEnergyCost;
+    private static readonly int exercisePerCost = LoadConfig.Load().DickData.ExerciseEnergyCost;
 
     public static async Task TryExercise(long user_id, long group_id, int exerciseTimes = 1)
     {
         string outputMessage;
+        var tipsMessageOfNegativeDick = "长度为负的牛子会获得锻炼补偿，帮助牛子更快恢复！";
 
         string[] winString =
         [
@@ -23,7 +25,7 @@ public class DickExercise
             "过度锻炼使你的牛子受到损伤", "在锻炼过程当中，带着镰刀路过的希儿不小心损伤了你的牛子。疼痛使你的牛子瞬间", "在锻炼当中，你遇到了莫娜。她误以为你的牛子是一种妖怪，用魔法攻击了它，这使得你的牛子",
             "在石锤按摩的过程中，诺艾尔不小心用石锤换成了铁锤。这使得你的牛子", "在锻炼过程当中，你的牛子被一只蚊子叮了一口，这使得你的牛子"
         ];
-        
+
         var dickFighterDataBase = new DickFighterDataBase();
 
         //查询是否已经存在牛子
@@ -43,19 +45,37 @@ public class DickExercise
             {
                 var newEnergy = currentEnergy - energyCost;
                 await dickFighterDataBase.UpdateDickEnergy(guid: newDick.GUID, energy: newEnergy);
-                var lengthDifference = GenerateRandom.GetRandomDouble(-5, 15) * exerciseTimes;
-                newDick.Length += lengthDifference;
+
+                var startLength = newDick.Length;
+
+                for (var i = 0; i < exerciseTimes; i++)
+                {
+                    double perDifference = 0;
+                    if (newDick.Length < 0)
+                        //如果牛子长度小于0，那么会获得锻炼补偿,帮助加速恢复正长度
+                        perDifference = GenerateRandom.GetRandomDouble(-5, 20) +
+                                        Math.Abs(GenerateRandom.GetRandomDouble(0.02, 0.04) * newDick.Length);
+                    else
+                        perDifference = GenerateRandom.GetRandomDouble(-5, 20);
+
+                    newDick.Length += perDifference;
+                }
+
+                var totalLengthDifference = newDick.Length - startLength;
+
+                newDick.Length += totalLengthDifference;
+
                 await dickFighterDataBase.UpdateDickLength(newDick.Length, newDick.GUID);
 
 
-                if (lengthDifference > 0)
+                if (totalLengthDifference > 0)
                 {
                     var winMessagePart1 = winString[Random.Shared.Next(0, winString.Length)];
                     outputMessage =
                         $"用户[CQ:at,qq={user_id}]，你的牛子“{newDick.NickName}”消耗{energyCost}体力值完成了{exerciseTimes}次锻炼！" +
                         winMessagePart1 +
-                        $"增长了{Math.Abs(lengthDifference):F3}cm，你的牛子目前长度为{newDick.Length:F2}cm，体力值为{newEnergy}/240。" +
-                        tipsMessage;
+                        $"增长了{Math.Abs(totalLengthDifference):F3}cm，你的牛子目前长度为{newDick.Length:F2}cm，体力值为{newEnergy}/240。" +
+                        tipsMessage + tipsMessageOfNegativeDick;
                 }
                 else
                 {
@@ -63,15 +83,15 @@ public class DickExercise
                     outputMessage =
                         $"用户[CQ:at,qq={user_id}]，你的牛子“{newDick.NickName}”消耗{energyCost}体力值完成了{exerciseTimes}次锻炼！" +
                         loseMessagePart1 +
-                        $"缩短了{Math.Abs(lengthDifference):F3}cm，你的牛子目前长度为{newDick.Length:F2}cm，体力值为{newEnergy}/240。" +
-                        tipsMessage;
+                        $"缩短了{Math.Abs(totalLengthDifference):F3}cm，你的牛子目前长度为{newDick.Length:F2}cm，体力值为{newEnergy}/240。" +
+                        tipsMessage + tipsMessageOfNegativeDick;
                 }
             }
             else
             {
                 outputMessage =
                     $"用户[CQ:at,qq={user_id}]，你的牛子“{newDick.NickName}”，体力值不足，无法锻炼！当前体力值为{currentEnergy}/240" +
-                    tipsMessage;
+                    tipsMessage + tipsMessageOfNegativeDick;
             }
         }
         else

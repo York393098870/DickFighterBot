@@ -181,7 +181,7 @@ public partial class DickFighterDataBase
 
     public async Task<Dick?> GetRandomDick(long groupid, string guid)
     {
-        // 这个方法给定一个groupid和一个excludedGuid，在数据库BasicInformation当中根据groupid随机返回一行数据，并确保返回的数据中不包含与excludedGuid相同GUID的行。
+        // 这个方法给定一个groupid和一个Guid，在数据库BasicInformation当中根据groupid随机返回一行数据，并确保返回的数据中不包含与Guid相同的行。
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
         await connection.OpenAsync();
 
@@ -194,6 +194,41 @@ public partial class DickFighterDataBase
 
         // 添加参数
         command.Parameters.AddWithValue("@GroupNumber", groupid);
+        command.Parameters.AddWithValue("@ExcludedGuid", guid);
+
+        await using var reader = await command.ExecuteReaderAsync();
+
+        // 处理查询结果
+        if (await reader.ReadAsync())
+        {
+            var dick = new Dick(
+                (long)reader["DickBelongings"],
+                reader["NickName"].ToString(),
+                Convert.ToInt32(reader["Gender"]),
+                (double)reader["Length"],
+                reader["GUID"].ToString()
+            );
+            return dick;
+        }
+
+        // 未找到符合条件的数据
+        return null;
+    }
+    
+    public async Task<Dick?> GetRandomDick(string guid)
+    {
+        // 这个方法给定一个Guid，在数据库BasicInformation当中随机返回一行数据，并确保返回的数据中不包含与Guid相同的行。
+        await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
+        await connection.OpenAsync();
+
+        // 构造SQL语句，排除指定GUID
+        var command = new SQLiteCommand(connection)
+        {
+            CommandText =
+                "SELECT * FROM BasicInformation WHERE GUID != @ExcludedGuid ORDER BY RANDOM() LIMIT 1"
+        };
+
+        // 添加参数
         command.Parameters.AddWithValue("@ExcludedGuid", guid);
 
         await using var reader = await command.ExecuteReaderAsync();

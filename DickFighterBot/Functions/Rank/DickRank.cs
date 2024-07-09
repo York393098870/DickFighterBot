@@ -1,4 +1,5 @@
-﻿using CoreLibrary.DataBase;
+﻿using CoreLibrary.config;
+using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
 using NLog;
 
@@ -8,9 +9,11 @@ public class DickRank
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
-    public static async Task GetGlobalRank(long group_id, int n = 5)
+    public static async Task GetGlobalRank(long group_id)
     {
         string outputMessage;
+
+        var n = LoadConfig.Load().Rank.GlobalRankTopCount;
 
         var dataBase = new DickFighterDataBase();
 
@@ -38,7 +41,7 @@ public class DickRank
                 outputMessage += rankMessage;
             }
 
-            dickList = await dataBase.GetFirstNDicksByOrder(n: dickCount, order: 1); //获取倒数的牛子
+            dickList = await dataBase.GetFirstNDicksByOrder(dickCount, 1); //获取倒数的牛子
             outputMessage += "\n全服最短牛子榜\n排名|昵称|长度\n";
 
             for (var i = 1; i <= dickList.Count; i++)
@@ -54,9 +57,11 @@ public class DickRank
         await WebSocketClient.SendMessage(SendGroupMessage.Generate(outputMessage, group_id));
     }
 
-    public static async Task GetGroupRank(long group_id, int n = 3)
+    public static async Task GetGroupRank(long group_id)
     {
         string outputMessage;
+
+        var n = LoadConfig.Load().Rank.GroupRankTopCount;
 
         var dataBase = new DickFighterDataBase();
 
@@ -73,7 +78,7 @@ public class DickRank
 
             var dickCount = Math.Min(count, n); //与其使用条件运算符，不如使用Math.Min()函数
 
-            var dickList = await dataBase.GetFirstNDicksByOrder(dickCount, group_id: group_id); //获取前n个牛子
+            var dickList = await dataBase.GetFirstNDicksByOrder(dickCount, group_id); //获取前n个牛子
 
             outputMessage = "当前排名如下：\n群最长牛子榜\n排名|昵称|长度\n";
 
@@ -84,7 +89,7 @@ public class DickRank
                 outputMessage += rankMessage;
             }
 
-            dickList = await dataBase.GetFirstNDicksByOrder(n: dickCount, order: 1, group_id: group_id); //获取倒数的牛子
+            dickList = await dataBase.GetFirstNDicksByOrder(dickCount, order: 1, group_id: group_id); //获取倒数的牛子
             outputMessage += "\n群最短牛子榜\n排名|昵称|长度\n";
 
             for (var i = 1; i <= dickList.Count; i++)
