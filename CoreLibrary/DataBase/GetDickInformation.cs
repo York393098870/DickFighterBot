@@ -26,11 +26,10 @@ public partial class DickFighterDataBase
         {
             var dickBelongs = (long)reader["DickBelongings"];
             var nickName = (string)reader["NickName"];
-            var gender = (int)reader["Gender"];
             var length = (double)reader["Length"];
             var guid = (string)reader["GUID"];
 
-            dick = new Dick(belongings: dickBelongs, nickName: nickName, gender: gender, length: length, guid: guid);
+            dick = new Dick(belongings: dickBelongs, nickName: nickName, length: length, guid: guid);
             return (ifExisted: true, dick);
         }
 

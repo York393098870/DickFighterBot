@@ -88,7 +88,7 @@ public partial class DickFighterDataBase
             var length = Convert.ToDouble(reader["Length"]);
             var guid = Convert.ToString(reader["GUID"]);
 
-            var dick = new Dick(dickBelongings, nickName, gender, length, guid);
+            var dick = new Dick(dickBelongings, nickName,  length, guid);
 
             dickList.Add(dick);
         }
@@ -140,7 +140,7 @@ public partial class DickFighterDataBase
             var length = Convert.ToDouble(reader["Length"]);
             var guid = Convert.ToString(reader["GUID"]);
 
-            var dick = new Dick(dickBelongings, nickName, gender, length, guid);
+            var dick = new Dick(dickBelongings, nickName, length, guid);
 
             dickList.Add(dick);
         }

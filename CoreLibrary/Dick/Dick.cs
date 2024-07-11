@@ -4,11 +4,10 @@ public class Dick
 {
     private int _energy;
 
-    public Dick(long belongings, string? nickName, int gender, double length, string? guid)
+    public Dick(long belongings, string? nickName, double length, string? guid)
     {
         Belongings = belongings;
         NickName = nickName;
-        Gender = (Gender)gender;
         Length = length;
         GUID = guid;
     }

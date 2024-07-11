@@ -41,7 +41,7 @@ public class Coffee
                 {
                     //存在相关记录
                     var lastDrinkTime = DateTimeOffset.FromUnixTimeSeconds(lastDrinkTimeFromDataBase);
-                    var nextAvailableTime = lastDrinkTime.AddHours(22);
+                    var nextAvailableTime = lastDrinkTime.AddHours(20);
                     var currentTime = DateTimeOffset.Now;
 
                     if (nextAvailableTime < currentTime) //判断上次喝咖啡的时间和现在是否超过了22小时

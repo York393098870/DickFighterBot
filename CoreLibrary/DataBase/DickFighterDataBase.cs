@@ -204,7 +204,7 @@ public partial class DickFighterDataBase
             var dick = new Dick(
                 (long)reader["DickBelongings"],
                 reader["NickName"].ToString(),
-                Convert.ToInt32(reader["Gender"]),
+                
                 (double)reader["Length"],
                 reader["GUID"].ToString()
             );
@@ -239,7 +239,7 @@ public partial class DickFighterDataBase
             var dick = new Dick(
                 (long)reader["DickBelongings"],
                 reader["NickName"].ToString(),
-                Convert.ToInt32(reader["Gender"]),
+                
                 (double)reader["Length"],
                 reader["GUID"].ToString()
             );

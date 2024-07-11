@@ -26,7 +26,7 @@ public class GenerateNewDick
         else
         {
             var newGuid = Guid.NewGuid().ToString();
-            var newDick = new Dick(user_id, "未改名的牛子", 0,
+            var newDick = new Dick(user_id, "未改名的牛子",
                 GenerateRandom.GetRandomDouble(5d, 15d), newGuid);
 
             await dickFighterDataBase.GenerateNewDick(user_id, group_id,
