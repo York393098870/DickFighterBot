@@ -14,7 +14,7 @@ public class Coffee
         string outputMessage;
         const int energyAdd = 60;
         var dickFighterDataBase = new DickFighterDataBase();
-        var (dickExisted, dick) = await dickFighterDataBase.CheckDickWithTwoId(user_id, group_id);
+        var (dickExisted, dick) = await dickFighterDataBase.CheckDickWithIds(user_id, group_id);
 
         if (dickExisted)
         {
@@ -34,7 +34,7 @@ public class Coffee
                     Logger.Info($"群{group_id}的用户{user_id}没有咖啡记录，新增一条咖啡记录！");
 
                     outputMessage =
-                        $"用户[CQ:at,qq={user_id}]，你的牛子[{dick.NickName}]饮用了一杯牛子咖啡，现在精神饱满，体力回复了{energyAdd}点。当前体力为{dick.Energy}/240。";
+                        $"[CQ:at,qq={user_id}]，你的牛子[{dick.NickName}]饮用了一杯牛子咖啡，现在精神饱满，体力回复了{energyAdd}点。当前体力为{dick.Energy}/240。";
                     break;
 
                 case true:
@@ -54,13 +54,13 @@ public class Coffee
                         Logger.Info($"群{group_id}的用户{user_id}饮用了一杯牛子咖啡。");
 
                         outputMessage =
-                            $"用户[CQ:at,qq={user_id}]，你的牛子[{dick.NickName}]饮用了一杯牛子咖啡，现在精神饱满，体力回复了{energyAdd}点。当前体力为{dick.Energy}/240。";
+                            $"[CQ:at,qq={user_id}]，你的牛子[{dick.NickName}]饮用了一杯牛子咖啡，现在精神饱满，体力回复了{energyAdd}点。当前体力为{dick.Energy}/240。";
                     }
                     else
                     {
                         var restOfTime = nextAvailableTime - currentTime;
                         outputMessage =
-                            $"用户[CQ:at,qq={user_id}]，你的牛子[{dick.NickName}]今天已经饮用过一杯咖啡了，请{restOfTime.Hours}小时{restOfTime.Minutes}分钟后再来！";
+                            $"[CQ:at,qq={user_id}]，你的牛子[{dick.NickName}]今天已经饮用过一杯咖啡了，请{restOfTime.Hours}小时{restOfTime.Minutes}分钟后再来！";
                     }
 
                     break;
@@ -72,6 +72,6 @@ public class Coffee
             outputMessage = TipsMessage.DickNotFound(user_id);
         }
 
-        await WebSocketClient.SendMessage(SendGroupMessage.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(SendGroupMessage.Generate(outputMessage, group_id));
     }
 }

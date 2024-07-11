@@ -32,7 +32,7 @@ public partial class DickFighterDataBase
         throw new Exception("检查牛子信息时发生致命错误！");
     }
 
-    public async Task<bool> InitializeGachaInfoForNewDick(string guid)
+    private async Task<bool> InitializeGachaInfoForNewDick(string guid)
     {
         //为新牛子在数据库当中生成一条初始记录
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);

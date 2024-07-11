@@ -30,7 +30,7 @@ public class DickExercise
 
         //查询是否已经存在牛子
         var (dickExisted, newDick) =
-            await dickFighterDataBase.CheckDickWithTwoId(user_id,
+            await dickFighterDataBase.CheckDickWithIds(user_id,
                 group_id);
         if (dickExisted)
         {
@@ -70,7 +70,7 @@ public class DickExercise
                 {
                     var winMessagePart1 = winString[Random.Shared.Next(0, winString.Length)];
                     outputMessage =
-                        $"用户[CQ:at,qq={user_id}]，你的牛子“{newDick.NickName}”消耗{energyCost}体力值完成了{exerciseTimes}次锻炼！" +
+                        $"[CQ:at,qq={user_id}]，你的牛子“{newDick.NickName}”消耗{energyCost}体力值完成了{exerciseTimes}次锻炼！" +
                         winMessagePart1 +
                         $"增长了{Math.Abs(totalLengthDifference):F3}cm，你的牛子目前长度为{newDick.Length:F2}cm，体力值为{newEnergy}/240。" +
                         tipsMessage + tipsMessageOfNegativeDick;
@@ -79,7 +79,7 @@ public class DickExercise
                 {
                     var loseMessagePart1 = loseString[Random.Shared.Next(0, loseString.Length)];
                     outputMessage =
-                        $"用户[CQ:at,qq={user_id}]，你的牛子“{newDick.NickName}”消耗{energyCost}体力值完成了{exerciseTimes}次锻炼！" +
+                        $"[CQ:at,qq={user_id}]，你的牛子“{newDick.NickName}”消耗{energyCost}体力值完成了{exerciseTimes}次锻炼！" +
                         loseMessagePart1 +
                         $"缩短了{Math.Abs(totalLengthDifference):F3}cm，你的牛子目前长度为{newDick.Length:F2}cm，体力值为{newEnergy}/240。" +
                         tipsMessage + tipsMessageOfNegativeDick;
@@ -88,7 +88,7 @@ public class DickExercise
             else
             {
                 outputMessage =
-                    $"用户[CQ:at,qq={user_id}]，你的牛子“{newDick.NickName}”，体力值不足，无法锻炼！当前体力值为{currentEnergy}/240" +
+                    $"[CQ:at,qq={user_id}]，你的牛子“{newDick.NickName}”，体力值不足，无法锻炼！当前体力值为{currentEnergy}/240" +
                     tipsMessage + tipsMessageOfNegativeDick;
             }
         }
@@ -97,7 +97,7 @@ public class DickExercise
             outputMessage = TipsMessage.DickNotFound(user_id);
         }
 
-        await WebSocketClient.SendMessage(SendGroupMessage.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(SendGroupMessage.Generate(outputMessage, group_id));
     }
 
     public static async Task IfNeedExercise(string rawMessage, long user_id, long group_id)

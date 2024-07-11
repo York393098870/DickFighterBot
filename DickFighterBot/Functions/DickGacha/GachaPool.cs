@@ -15,6 +15,6 @@ public class GachaPool
         var message2 = "2. 五星常驻牛子：\n[开拓者牛子]\n技能：常驻的牛子有个√8的技能，老老实实抽限定牛子去\n";
         var message3 = "3. 卡池概率公示：\n五星牛子概率：1.2%\n获得限定牛子概率为50%，若上一次没能获得限定牛子，则下一次必定获得限定牛子\n";
         var outputMessage = message0 + message1 + message2 + message3;
-        await WebSocketClient.SendMessage(SendGroupMessage.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(SendGroupMessage.Generate(outputMessage, group_id));
     }
 }

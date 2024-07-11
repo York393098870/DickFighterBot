@@ -4,7 +4,7 @@ namespace CoreLibrary.DataBase;
 
 public partial class DickFighterDataBase
 {
-    public async Task<(bool ifExisted, Dick? dick)> CheckDickWithTwoId(long userId, long groupId)
+    public async Task<(bool ifExisted, Dick? dick)> CheckDickWithIds(long userId, long groupId)
     {
         //给定指定QQ号和群号，查询牛子是否存在并返回结果
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -24,10 +24,13 @@ public partial class DickFighterDataBase
 
         if (await reader.ReadAsync())
         {
-            dick = new Dick((long)reader["DickBelongings"],
-                reader["NickName"].ToString(),
-                Convert.ToInt32(reader["Gender"]),
-                (double)reader["Length"], reader["GUID"].ToString());
+            var dickBelongs = (long)reader["DickBelongings"];
+            var nickName = (string)reader["NickName"];
+            var gender = (int)reader["Gender"];
+            var length = (double)reader["Length"];
+            var guid = (string)reader["GUID"];
+
+            dick = new Dick(belongings: dickBelongs, nickName: nickName, gender: gender, length: length, guid: guid);
             return (ifExisted: true, dick);
         }
 

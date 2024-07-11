@@ -4,7 +4,6 @@ using System.Text.Json;
 using CoreLibrary.config;
 using CoreLibrary.DataBase;
 using DickFighterBot.Functions;
-using DickFighterBot.Functions.DickGacha;
 using DickFighterBot.Functions.Rank;
 using NLog;
 
@@ -13,7 +12,6 @@ namespace DickFighterBot;
 public class WebSocketClient
 {
     private static ClientWebSocket clientWebSocket;
-    private static string databaseFolderPath;
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
@@ -25,8 +23,7 @@ public class WebSocketClient
 
         //加载配置文件
         var configFile = LoadConfig.Load();
-        var fullAddress = $"ws://{configFile.MainSettings.ws_host}:{configFile.MainSettings.port}";
-        var serverUri = new Uri(fullAddress);
+        var serverUri = new Uri($"ws://{configFile.MainSettings.ws_host}:{configFile.MainSettings.port}");
 
         try
         {
@@ -34,7 +31,7 @@ public class WebSocketClient
             Logger.Info("WebSocket服务器连接成功！");
 
             // 启动消息接收任务
-            var receiveTask = ReceiveMessages();
+            var receiveTask = ReceiveFromServer();
 
             // 等待消息接收任务完成
             await receiveTask;
@@ -56,109 +53,102 @@ public class WebSocketClient
         }
     }
 
-    public static async Task SendMessage(string message)
+    public static async Task Send(string message)
     {
         var messageBytes = Encoding.UTF8.GetBytes(message);
         await clientWebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true,
             CancellationToken.None);
 
-        await Task.Delay(LoadConfig.Load().MainSettings.Interval);
+        await Task.Delay(LoadConfig.Load().MainSettings.Interval); //延迟一定的时间再发送下一条消息
     }
 
-    private static async Task ReceiveMessages()
+    private static async Task ReceiveFromServer()
     {
-        var buffer = new byte[4096];
+        var buffer = new byte[2048];
         while (clientWebSocket.State == WebSocketState.Open)
         {
             var result =
                 await clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            Logger.Trace("收到类型为" + result.MessageType + "的消息。");
+            Logger.Trace($"收到类型为[{result.MessageType}]的消息。");
             var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
             Logger.Trace("收到消息：" + receivedMessage);
 
             try
             {
-                var groupMessage = JsonSerializer.Deserialize<Message.GroupMessage>(receivedMessage); //反序列化收到的消息
+                var messageReceived = JsonSerializer.Deserialize<Message.GroupMessage>(receivedMessage); //反序列化收到的消息
 
-                switch (groupMessage?.raw_message)
+                switch (messageReceived?.raw_message)
                 {
                     case "/status":
                     {
-                        await CurrentStatus.Main(groupMessage.group_id);
+                        await CurrentStatus.Main(messageReceived.group_id);
                         break;
                     }
                     case "牛子帮助":
                     {
-                        await ShowFunctions.ShowHelp(groupMessage.group_id);
+                        await ShowFunctions.ShowHelp(messageReceived.group_id);
                         break;
                     }
                     case "生成牛子":
                     {
-                        await GenerateNewDick.Main(groupMessage.user_id, groupMessage.group_id);
+                        await GenerateNewDick.Main(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     case "我的牛子":
                     {
-                        await CheckMyDick.Main(groupMessage.user_id, groupMessage.group_id);
+                        await CheckMyDick.Main(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     case "锻炼牛子":
                     {
-                        await DickExercise.TryExercise(groupMessage.user_id, groupMessage.group_id);
+                        await DickExercise.TryExercise(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     case "润滑度":
                     {
-                        await 润滑度.Main(groupMessage.user_id, groupMessage.group_id);
+                        await 润滑度.Main(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     case "斗牛":
                     {
-                        await 斗牛.FightInGroup(groupMessage.user_id, groupMessage.group_id);
+                        await 斗牛.FightInGroup(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     case "跨服斗牛":
                     {
-                        await 斗牛.Fight(groupMessage.user_id, groupMessage.group_id);
-                        break;
-                    }
-
-                    case "牛子卡池":
-                    {
-                        //Todo: 牛子抽卡
-                        await GachaPool.Show(groupMessage.group_id);
+                        await 斗牛.Fight(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     case "全服牛子榜":
                     {
-                        await DickRank.GetGlobalRank(groupMessage.group_id);
+                        await DickRank.GetGlobalRank(messageReceived.group_id);
                         break;
                     }
                     case "群牛子榜":
                     {
-                        await DickRank.GetGroupRank(groupMessage.group_id);
+                        await DickRank.GetGroupRank(messageReceived.group_id);
                         break;
                     }
                     case "牛子咖啡":
                     {
-                        await Coffee.DrinkCoffee(groupMessage.user_id, groupMessage.group_id);
+                        await Coffee.DrinkCoffee(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     default:
                     {
-                        if (groupMessage.raw_message != null)
+                        if (messageReceived.raw_message != null)
                         {
                             //不是空消息
 
-                            if (groupMessage.raw_message.Contains("改牛子名"))
-                                await ChangeDickName.Main(groupMessage.user_id,
-                                    groupMessage.group_id,
-                                    groupMessage.raw_message);
+                            if (messageReceived.raw_message.Contains("改牛子名"))
+                                await ChangeDickName.Main(messageReceived.user_id,
+                                    messageReceived.group_id,
+                                    messageReceived.raw_message);
 
-                            if (groupMessage.raw_message.Contains("锻炼牛子"))
-                                await DickExercise.IfNeedExercise(groupMessage.raw_message,
-                                    groupMessage.user_id,
-                                    groupMessage.group_id);
+                            if (messageReceived.raw_message.Contains("锻炼牛子"))
+                                await DickExercise.IfNeedExercise(messageReceived.raw_message,
+                                    messageReceived.user_id,
+                                    messageReceived.group_id);
                         }
 
                         break;
@@ -167,7 +157,7 @@ public class WebSocketClient
             }
             catch (JsonException ex)
             {
-                Logger.Warn("解析JSON时出现异常： " + ex.Message);
+                Logger.Warn($"解析JSON时出现异常：{ex.Message} ");
             }
         }
     }

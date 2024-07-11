@@ -19,7 +19,7 @@ public class 斗牛
         var dickFighterDataBase = new DickFighterDataBase();
 
         var (dickExisted, challengerDick) =
-            await dickFighterDataBase.CheckDickWithTwoId(user_id,
+            await dickFighterDataBase.CheckDickWithIds(user_id,
                 group_id);
         if (dickExisted)
         {
@@ -41,7 +41,7 @@ public class 斗牛
                     var battleResult = FightCalculation.Calculate(challengerDick.Length,
                         defenderDick.Length, 0, challengerDick.Length - defenderDick.Length);
                     var stringMessage1 =
-                        $"用户[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，消耗{energyCost}点体力，向 {defenderDick.Belongings}的牛子“{defenderDick.NickName}” 发起了斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
+                        $"[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，消耗{energyCost}点体力，向 {defenderDick.Belongings}的牛子“{defenderDick.NickName}” 发起了斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
 
                     //更新牛子长度
                     challengerDick.Length += battleResult.challengerChange;
@@ -61,13 +61,13 @@ public class 斗牛
                 }
                 else
                 {
-                    outputMessage = $"用户[CQ:at,qq={user_id}]，群内没有其他牛子！快邀请一只牛子进群吧！";
+                    outputMessage = $"[CQ:at,qq={user_id}]，群内没有其他牛子！快邀请一只牛子进群吧！";
                 }
             }
             else
             {
                 outputMessage =
-                    $"用户[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，体力值不足，无法斗牛！当前体力值为{currentEnergy}/240";
+                    $"[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，体力值不足，无法斗牛！当前体力值为{currentEnergy}/240";
             }
         }
         else
@@ -75,7 +75,7 @@ public class 斗牛
             outputMessage = TipsMessage.DickNotFound(user_id);
         }
 
-        await WebSocketClient.SendMessage(SendGroupMessage.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(SendGroupMessage.Generate(outputMessage, group_id));
     }
 
     public static async Task Fight(long user_id, long group_id)
@@ -87,7 +87,7 @@ public class 斗牛
         var dickFighterDataBase = new DickFighterDataBase();
 
         var (dickExisted, challengerDick) =
-            await dickFighterDataBase.CheckDickWithTwoId(user_id,
+            await dickFighterDataBase.CheckDickWithIds(user_id,
                 group_id);
 
         if (dickExisted)
@@ -111,7 +111,7 @@ public class 斗牛
                     var battleResult = FightCalculation.Calculate(challengerDick.Length,
                         defenderDick.Length, 0, challengerDick.Length - defenderDick.Length, 2);
                     var stringMessage1 =
-                        $"用户[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，消耗{energyCost}点体力，向{defenderDick.Belongings}的牛子“{defenderDick.NickName}” 发起了跨服斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
+                        $"[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，消耗{energyCost}点体力，向{defenderDick.Belongings}的牛子“{defenderDick.NickName}” 发起了跨服斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
 
                     //更新牛子长度
                     challengerDick.Length += battleResult.challengerChange;
@@ -131,13 +131,13 @@ public class 斗牛
                 }
                 else
                 {
-                    outputMessage = $"用户[CQ:at,qq={user_id}]，服务器内没有其他牛子！快邀请一只牛子吧！";
+                    outputMessage = $"[CQ:at,qq={user_id}]，服务器内没有其他牛子！快邀请一只牛子吧！";
                 }
             }
             else
             {
                 outputMessage =
-                    $"用户[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，体力值不足，无法进行跨服斗牛！当前体力值为{currentEnergy}/240";
+                    $"[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，体力值不足，无法进行跨服斗牛！当前体力值为{currentEnergy}/240";
             }
         }
         else
@@ -145,6 +145,6 @@ public class 斗牛
             outputMessage = TipsMessage.DickNotFound(user_id);
         }
 
-        await WebSocketClient.SendMessage(SendGroupMessage.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(SendGroupMessage.Generate(outputMessage, group_id));
     }
 }

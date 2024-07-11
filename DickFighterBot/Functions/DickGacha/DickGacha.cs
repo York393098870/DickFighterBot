@@ -8,7 +8,7 @@ public class DickGacha
     {
         var dickFighterDataBase = new DickFighterDataBase();
         //首先判定是否有牛子
-        var DickInfo = await dickFighterDataBase.CheckDickWithTwoId(user_id, group_id);
+        var DickInfo = await dickFighterDataBase.CheckDickWithIds(user_id, group_id);
         string Message;
         if (DickInfo.ifExisted)
         {

@@ -16,7 +16,7 @@ public class FightCalculation
         double defenderLength, int morale, double differenceValue, int times = 1)
     {
         var differenceValueRate = Mapping.NewMapping(differenceValue);
-        var winRate = 1 / 6d + 1 / 3d * (differenceValueRate + 1);
+        var winRate = (1 / 10d) / 2 + (9 / 10d) / 2 * (differenceValueRate + 1);
         var winRatePct = winRate * 100;
 
         var boolResult = GenerateRandom.GetRandomDouble() < winRate; //判定胜负

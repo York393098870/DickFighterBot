@@ -15,7 +15,7 @@ public class ChangeDickName
         var dickFighterDataBase = new DickFighterDataBase();
 
         var (dickExisted, newDick) =
-            await dickFighterDataBase.CheckDickWithTwoId(user_id,
+            await dickFighterDataBase.CheckDickWithIds(user_id,
                 group_id);
 
         if (ifNeedEdit)
@@ -27,12 +27,12 @@ public class ChangeDickName
                 var changeResult = await dickFighterDataBase.UpdateDickNickName(user_id, group_id, newName);
                 if (changeResult)
                 {
-                    stringMessage = $"用户[CQ:at,qq={user_id}]，你的牛子名字已经修改为[{newName}]！";
+                    stringMessage = $"[CQ:at,qq={user_id}]，你的牛子名字已经修改为[{newName}]！";
                     Logger.Info($"群{group_id}当中的用户{user_id}修改了牛子昵称，新昵称为：{newName}");
                 }
                 else
                 {
-                    stringMessage = $"用户[CQ:at,qq={user_id}]，你的牛子名字修改失败！请稍后再试！";
+                    stringMessage = $"[CQ:at,qq={user_id}]，你的牛子名字修改失败！请稍后再试！";
                     Logger.Error($"群{group_id}当中的用户{user_id}修改牛子昵称失败！");
                 }
             }
@@ -41,7 +41,7 @@ public class ChangeDickName
                 stringMessage = TipsMessage.DickNotFound(user_id);
             }
 
-            await WebSocketClient.SendMessage(SendGroupMessage.Generate(stringMessage, group_id));
+            await WebSocketClient.Send(SendGroupMessage.Generate(stringMessage, group_id));
         }
     }
 }

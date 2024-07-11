@@ -48,11 +48,12 @@ public class LoadConfig
     public static Config Load()
     {
         //这里判断配置文件路径要从两个方面看，首先检测是否有本地配置文件，如果没有则使用程序自带的配置文件
-        var configPath = Path.Combine(LocalProgramPath, "main.json");
+        var configName = "main.json";
+        var configPath = Path.Combine(LocalProgramPath, configName);
         if (!File.Exists(configPath))
         {
             var currentDirectory = Path.Combine(Directory.GetCurrentDirectory(), "config");
-            configPath = Path.Combine(currentDirectory, "main.json");
+            configPath = Path.Combine(currentDirectory, configName);
             Logger.Info("没有检测到本地配置文件，已加载程序自带配置文件！");
         }
         else
@@ -63,11 +64,10 @@ public class LoadConfig
         var jsonString = File.ReadAllText(configPath);
         var programConfig = JsonSerializer.Deserialize<Config>(jsonString);
 
-        if (programConfig == null)
-        {
-            Logger.Fatal("读取配置文件时出现问题！");
-        }
+        if (programConfig != null) return programConfig;
+        
+        Logger.Fatal("读取配置文件时出现问题！");
+        throw new Exception($"配置文件读取错误，请检查配置文件{configName}是否存在！");
 
-        return programConfig;
     }
 }

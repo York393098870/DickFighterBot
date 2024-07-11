@@ -8,7 +8,7 @@ public class 润滑度
     {
         var randomNumber = Random.Shared.NextDouble() * 100;
         var stringMessagePart1 =
-            $"用户[CQ:at,qq={user_id}]，你今日的直肠润滑度为{randomNumber:F2}%，";
+            $"[CQ:at,qq={user_id}]，你今日的直肠润滑度为{randomNumber:F2}%，";
         var stringMessagePart2 = randomNumber switch
         {
             <= 25 => "前进的道路上阻力并不小。",
@@ -26,6 +26,6 @@ public class 润滑度
         ];
         var stringMessagePart4 = stringList[Random.Shared.Next(0, stringList.Length)];
         var stringMessage = stringMessagePart1 + stringMessagePart2 + stringMessagePart3 + stringMessagePart4;
-        await WebSocketClient.SendMessage(SendGroupMessage.Generate(stringMessage, group_id));
+        await WebSocketClient.Send(SendGroupMessage.Generate(stringMessage, group_id));
     }
 }
