@@ -52,7 +52,7 @@ public class LoadConfig
         if (!File.Exists(configPath))
         {
             var currentDirectory = Path.Combine(Directory.GetCurrentDirectory(), "config");
-            configPath = Path.Combine(currentDirectory, "config.json");
+            configPath = Path.Combine(currentDirectory, "main.json");
             Logger.Info("没有检测到本地配置文件，已加载程序自带配置文件！");
         }
         else

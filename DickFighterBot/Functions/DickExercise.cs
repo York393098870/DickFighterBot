@@ -50,7 +50,7 @@ public class DickExercise
 
                 for (var i = 0; i < exerciseTimes; i++)
                 {
-                    double perDifference = 0;
+                    double perDifference;
                     if (newDick.Length < 0)
                         //如果牛子长度小于0，那么会获得锻炼补偿,帮助加速恢复正长度
                         perDifference = GenerateRandom.GetRandomDouble(-5, 20) +
@@ -62,8 +62,6 @@ public class DickExercise
                 }
 
                 var totalLengthDifference = newDick.Length - startLength;
-
-                newDick.Length += totalLengthDifference;
 
                 await dickFighterDataBase.UpdateDickLength(newDick.Length, newDick.GUID);
 
