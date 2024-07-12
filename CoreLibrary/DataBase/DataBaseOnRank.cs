@@ -47,7 +47,7 @@ public partial class DickFighterDataBase
         throw new Exception("无法获取数据库中指定群牛子的总数！");
     }
 
-    public async Task<List<Dick>> GetFirstNDicksByOrder(int n, int order = 0)
+    public async Task<List<Dick.Dick>> GetFirstNDicksByOrder(int n, int order = 0)
     {
         //根据给定的排序方式，返回数据库中的前n个牛子（或者后n个）
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -78,7 +78,7 @@ public partial class DickFighterDataBase
 
         await using var reader = await command.ExecuteReaderAsync();
 
-        var dickList = new List<Dick>();
+        var dickList = new List<Dick.Dick>();
 
         while (await reader.ReadAsync())
         {
@@ -88,7 +88,7 @@ public partial class DickFighterDataBase
             var length = Convert.ToDouble(reader["Length"]);
             var guid = Convert.ToString(reader["GUID"]);
 
-            var dick = new Dick(dickBelongings, nickName,  length, guid);
+            var dick = new Dick.Dick(dickBelongings, nickName,  length, guid);
 
             dickList.Add(dick);
         }
@@ -96,7 +96,7 @@ public partial class DickFighterDataBase
         return dickList;
     }
 
-    public async Task<List<Dick>> GetFirstNDicksByOrder(int n, long group_id, int order = 0)
+    public async Task<List<Dick.Dick>> GetFirstNDicksByOrder(int n, long group_id, int order = 0)
     {
         //根据给定的排序方式，返回指定群中的前n个牛子（或者后n个）
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -130,7 +130,7 @@ public partial class DickFighterDataBase
 
         await using var reader = await command.ExecuteReaderAsync();
 
-        var dickList = new List<Dick>();
+        var dickList = new List<Dick.Dick>();
 
         while (await reader.ReadAsync())
         {
@@ -140,7 +140,7 @@ public partial class DickFighterDataBase
             var length = Convert.ToDouble(reader["Length"]);
             var guid = Convert.ToString(reader["GUID"]);
 
-            var dick = new Dick(dickBelongings, nickName, length, guid);
+            var dick = new Dick.Dick(dickBelongings, nickName, length, guid);
 
             dickList.Add(dick);
         }

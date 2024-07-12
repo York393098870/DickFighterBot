@@ -6,7 +6,7 @@ namespace DickFighterBot.Functions;
 public class CurrentStatus
 {
     // This is a simple function that returns the current status of the bot.
-    public static async Task Main(long group_id)
+    public static async Task ShowStatus(long group_id)
     {
         var uptime =
             DateTime.Now - Process.GetCurrentProcess().StartTime;

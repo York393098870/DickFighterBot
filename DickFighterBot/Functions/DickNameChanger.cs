@@ -5,11 +5,11 @@ using NLog;
 
 namespace DickFighterBot.Functions;
 
-public class ChangeDickName
+public class DickNameChanger
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
-    public static async Task Main(long user_id, long group_id, string rawMessage)
+    public static async Task Change(long user_id, long group_id, string rawMessage)
     {
         var (newName, ifNeedEdit) = 正则表达式.改牛子名(rawMessage);
         var dickFighterDataBase = new DickFighterDataBase();

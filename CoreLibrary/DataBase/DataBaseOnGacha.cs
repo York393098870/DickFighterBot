@@ -21,7 +21,7 @@ public partial class DickFighterDataBase
                 weaponType: Convert.ToInt32(reader["WeaponType"]));
 
         //自动初始化一条记录
-        var initializeResult = await InitializeGachaInfoForNewDick(guid);
+        var initializeResult = await CreateNewGachaRecord(guid);
         if (initializeResult)
         {
             Logger.Info("没有查询到该牛子的抽卡信息，正在初始化...");
@@ -32,7 +32,7 @@ public partial class DickFighterDataBase
         throw new Exception("检查牛子信息时发生致命错误！");
     }
 
-    private async Task<bool> InitializeGachaInfoForNewDick(string guid)
+    private async Task<bool> CreateNewGachaRecord(string guid)
     {
         //为新牛子在数据库当中生成一条初始记录
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);

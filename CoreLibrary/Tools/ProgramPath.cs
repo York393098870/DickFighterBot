@@ -1,4 +1,4 @@
-﻿namespace CoreLibrary;
+﻿namespace CoreLibrary.Tools;
 
 public class ProgramPath
 {

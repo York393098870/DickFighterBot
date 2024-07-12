@@ -13,7 +13,7 @@ public class DickRank
     {
         string outputMessage;
 
-        var n = LoadConfig.Load().Rank.GlobalRankTopCount;
+        var n = ConfigLoader.Load().Rank.GlobalRankTopCount;
 
         var dataBase = new DickFighterDataBase();
 
@@ -61,7 +61,7 @@ public class DickRank
     {
         string outputMessage;
 
-        var n = LoadConfig.Load().Rank.GroupRankTopCount;
+        var n = ConfigLoader.Load().Rank.GroupRankTopCount;
 
         var dataBase = new DickFighterDataBase();
 

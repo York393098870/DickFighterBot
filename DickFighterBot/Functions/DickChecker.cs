@@ -4,9 +4,9 @@ using CoreLibrary.Tools;
 
 namespace DickFighterBot.Functions;
 
-public class CheckMyDick
+public class DickChecker
 {
-    public static async Task Main(long user_id, long group_id)
+    public static async Task CheckSelfDick(long user_id, long group_id)
     {
         string stringMessage;
         var dickFighterDataBase = new DickFighterDataBase();

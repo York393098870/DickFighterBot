@@ -4,7 +4,7 @@ namespace CoreLibrary.DataBase;
 
 public partial class DickFighterDataBase
 {
-    public async Task<(bool, long)> CheckIfCoffeeLine(string guid)
+    public async Task<(bool, long)> CheckCoffeeInformation(string guid)
     {
         try
         {

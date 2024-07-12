@@ -4,7 +4,7 @@ namespace CoreLibrary.DataBase;
 
 public partial class DickFighterDataBase
 {
-    public async Task<(bool ifExisted, Dick? dick)> CheckDickWithIds(long userId, long groupId)
+    public async Task<(bool ifExisted, Dick.Dick? dick)> CheckDickWithIds(long userId, long groupId)
     {
         //给定指定QQ号和群号，查询牛子是否存在并返回结果
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -20,7 +20,7 @@ public partial class DickFighterDataBase
 
         await using var reader = await command.ExecuteReaderAsync();
 
-        Dick? dick;
+        Dick.Dick? dick;
 
         if (await reader.ReadAsync())
         {
@@ -29,7 +29,7 @@ public partial class DickFighterDataBase
             var length = (double)reader["Length"];
             var guid = (string)reader["GUID"];
 
-            dick = new Dick(belongings: dickBelongs, nickName: nickName, length: length, guid: guid);
+            dick = new Dick.Dick(belongings: dickBelongs, nickName: nickName, length: length, guid: guid);
             return (ifExisted: true, dick);
         }
 
@@ -51,7 +51,6 @@ public partial class DickFighterDataBase
         command.Parameters.AddWithValue("@DickGUID", guid);
 
         await using var reader = await command.ExecuteReaderAsync();
-
 
         if (!await reader.ReadAsync()) throw new Exception("未查询到你的牛子数据！");
         var energyLastUpdate = Convert.ToInt64(reader["EnergyLastUpdate"]);

@@ -17,12 +17,12 @@ public class WebSocketClient
 
     public static async Task Main()
     {
-        await DickFighterDataBase.InitializeDataBase(); //初始化数据库
+        await DickFighterDataBase.Initialize(); //初始化数据库
 
         clientWebSocket = new ClientWebSocket();
 
         //加载配置文件
-        var configFile = LoadConfig.Load();
+        var configFile = ConfigLoader.Load();
         var serverUri = new Uri($"ws://{configFile.MainSettings.ws_host}:{configFile.MainSettings.port}");
 
         try
@@ -59,7 +59,7 @@ public class WebSocketClient
         await clientWebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true,
             CancellationToken.None);
 
-        await Task.Delay(LoadConfig.Load().MainSettings.Interval); //延迟一定的时间再发送下一条消息
+        await Task.Delay(ConfigLoader.Load().MainSettings.Interval); //延迟一定的时间再发送下一条消息
     }
 
     private static async Task ReceiveFromServer()
@@ -81,7 +81,7 @@ public class WebSocketClient
                 {
                     case "/status":
                     {
-                        await CurrentStatus.Main(messageReceived.group_id);
+                        await CurrentStatus.ShowStatus(messageReceived.group_id);
                         break;
                     }
                     case "牛子帮助":
@@ -91,12 +91,12 @@ public class WebSocketClient
                     }
                     case "生成牛子":
                     {
-                        await GenerateNewDick.Main(messageReceived.user_id, messageReceived.group_id);
+                        await NewDickGenerator.Generate(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     case "我的牛子":
                     {
-                        await CheckMyDick.Main(messageReceived.user_id, messageReceived.group_id);
+                        await DickChecker.CheckSelfDick(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     case "锻炼牛子":
@@ -104,19 +104,14 @@ public class WebSocketClient
                         await DickExercise.TryExercise(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
-                    case "润滑度":
-                    {
-                        await 润滑度.Main(messageReceived.user_id, messageReceived.group_id);
-                        break;
-                    }
                     case "斗牛":
                     {
-                        await 斗牛.FightInGroup(messageReceived.user_id, messageReceived.group_id);
+                        await DickFighter.FightInGroup(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     case "跨服斗牛":
                     {
-                        await 斗牛.Fight(messageReceived.user_id, messageReceived.group_id);
+                        await DickFighter.Fight(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
                     case "全服牛子榜":
@@ -141,7 +136,7 @@ public class WebSocketClient
                             //不是空消息
 
                             if (messageReceived.raw_message.Contains("改牛子名"))
-                                await ChangeDickName.Main(messageReceived.user_id,
+                                await DickNameChanger.Change(messageReceived.user_id,
                                     messageReceived.group_id,
                                     messageReceived.raw_message);
 

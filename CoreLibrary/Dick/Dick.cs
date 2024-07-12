@@ -1,4 +1,4 @@
-﻿namespace CoreLibrary;
+﻿namespace CoreLibrary.Dick;
 
 public class Dick
 {

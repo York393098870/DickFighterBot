@@ -18,7 +18,7 @@ public class Coffee
 
         if (dickExisted)
         {
-            var (recordExisted, lastDrinkTimeFromDataBase) = await dickFighterDataBase.CheckIfCoffeeLine(dick.GUID);
+            var (recordExisted, lastDrinkTimeFromDataBase) = await dickFighterDataBase.CheckCoffeeInformation(dick.GUID);
 
             dick.Energy = await dickFighterDataBase.CheckDickEnergyWithGuid(dick.GUID);
 

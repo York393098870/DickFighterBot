@@ -3,7 +3,7 @@ using NLog;
 
 namespace CoreLibrary.config;
 
-public class LoadConfig
+public class ConfigLoader
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 

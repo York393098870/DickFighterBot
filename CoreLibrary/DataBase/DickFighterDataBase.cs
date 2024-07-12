@@ -7,7 +7,7 @@ public partial class DickFighterDataBase
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
-    public static async Task InitializeDataBase()
+    public static async Task Initialize()
     {
         //初始化数据库
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -31,7 +31,7 @@ public partial class DickFighterDataBase
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<bool> GenerateNewDick(long userId, long groupId, Dick newDick)
+    public async Task<bool> GenerateNewDick(long userId, long groupId, Dick.Dick newDick)
     {
         //给定指定QQ号和群号以及牛子，在数据库当中写入新的牛子
         try
@@ -88,98 +88,7 @@ public partial class DickFighterDataBase
         }
     }
 
-    public async Task<bool> UpdateDickNickName(long userId, long groupId, string newNickName)
-    {
-        // 根据GroupNumber和DickBelongings修改NickName
-        try
-        {
-            await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
-            await connection.OpenAsync();
-
-            var command = new SQLiteCommand(connection)
-            {
-                CommandText =
-                    "UPDATE BasicInformation SET NickName = @NickName WHERE DickBelongings = @DickBelongings AND GroupNumber = @GroupNumber"
-            };
-            command.Parameters.AddWithValue("@NickName", newNickName);
-            command.Parameters.AddWithValue("@DickBelongings", userId);
-            command.Parameters.AddWithValue("@GroupNumber", groupId);
-
-            // 执行更新操作
-            var rowsAffected = await command.ExecuteNonQueryAsync();
-            return rowsAffected > 0;
-        }
-        catch (Exception e)
-        {
-            // 处理异常，例如记录错误日志
-            Logger.Error($"数据库操作：更新牛子昵称时发生错误：{e.Message}");
-            // 返回更新失败
-            return false;
-        }
-    }
-
-    public async Task<bool> UpdateDickEnergy(int energy, string guid)
-    {
-        // 根据GUID更新体力
-        try
-        {
-            await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
-            await connection.OpenAsync();
-
-            var command = new SQLiteCommand(connection)
-            {
-                CommandText =
-                    "UPDATE Energy SET EnergyLastUpdate=@EnergyLastUpdate,EnergyLastUpdateTime=@EnergyLastUpdateTime  WHERE DickGUID = @DickGUID"
-            };
-            command.Parameters.AddWithValue("@EnergyLastUpdate", energy);
-            command.Parameters.AddWithValue("@EnergyLastUpdateTime", DateTimeOffset.Now.ToUnixTimeSeconds());
-            command.Parameters.AddWithValue("@DickGUID", guid);
-
-            // 执行更新操作
-            var rowsAffected = await command.ExecuteNonQueryAsync();
-            return rowsAffected > 0;
-        }
-        catch (Exception e)
-        {
-            // 处理异常，记录错误日志
-            Logger.Error($"数据库操作：更新牛子体力时发生错误：{e.Message}");
-
-            // 返回更新失败
-            return false;
-        }
-    }
-
-    public async Task<bool> UpdateDickLength(double length, string guid)
-    {
-        // 根据GUID更新体力
-        try
-        {
-            await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
-            await connection.OpenAsync();
-
-            var command = new SQLiteCommand(connection)
-            {
-                CommandText =
-                    "UPDATE BasicInformation SET Length=@Length  WHERE GUID = @GUID"
-            };
-            command.Parameters.AddWithValue("@Length", length);
-            command.Parameters.AddWithValue("@GUID", guid);
-
-
-            // 执行更新操作
-            var rowsAffected = await command.ExecuteNonQueryAsync();
-            return rowsAffected > 0;
-        }
-        catch (Exception e)
-        {
-            // 处理异常，记录错误日志
-            Logger.Error($"数据库操作：更新牛子长度时发生错误：{e.Message}");
-            // 返回更新失败
-            return false;
-        }
-    }
-
-    public async Task<Dick?> GetRandomDick(long groupid, string guid)
+    public async Task<Dick.Dick?> GetRandomDick(long groupid, string guid)
     {
         // 这个方法给定一个groupid和一个Guid，在数据库BasicInformation当中根据groupid随机返回一行数据，并确保返回的数据中不包含与Guid相同的行。
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -201,7 +110,7 @@ public partial class DickFighterDataBase
         // 处理查询结果
         if (await reader.ReadAsync())
         {
-            var dick = new Dick(
+            var dick = new Dick.Dick(
                 (long)reader["DickBelongings"],
                 reader["NickName"].ToString(),
                 
@@ -215,7 +124,7 @@ public partial class DickFighterDataBase
         return null;
     }
     
-    public async Task<Dick?> GetRandomDick(string guid)
+    public async Task<Dick.Dick?> GetRandomDick(string guid)
     {
         // 这个方法给定一个Guid，在数据库BasicInformation当中随机返回一行数据，并确保返回的数据中不包含与Guid相同的行。
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -236,7 +145,7 @@ public partial class DickFighterDataBase
         // 处理查询结果
         if (await reader.ReadAsync())
         {
-            var dick = new Dick(
+            var dick = new Dick.Dick(
                 (long)reader["DickBelongings"],
                 reader["NickName"].ToString(),
                 

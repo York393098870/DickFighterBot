@@ -1,13 +1,14 @@
 ﻿using CoreLibrary;
 using CoreLibrary.DataBase;
+using CoreLibrary.Dick;
 using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
 
 namespace DickFighterBot.Functions;
 
-public class GenerateNewDick
+public class NewDickGenerator
 {
-    public static async Task Main(long user_id, long group_id)
+    public static async Task Generate(long user_id, long group_id)
     {
         var dickFighterDataBase = new DickFighterDataBase();
 
@@ -27,7 +28,7 @@ public class GenerateNewDick
         {
             var newGuid = Guid.NewGuid().ToString();
             var newDick = new Dick(user_id, "未改名的牛子",
-                GenerateRandom.GetRandomDouble(5d, 15d), newGuid);
+                RandomGenerator.GetRandomDouble(5d, 15d), newGuid);
 
             await dickFighterDataBase.GenerateNewDick(user_id, group_id,
                 newDick);

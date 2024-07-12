@@ -1,6 +1,6 @@
 ﻿namespace CoreLibrary.Tools;
 
-public class GenerateRandom
+public class RandomGenerator
 {
     public static double GetRandomDouble(double min = 0d, double max = 1d)
     {

@@ -8,13 +8,13 @@ using CoreLibrary.Tools;
 
 namespace DickFighterBot.Functions;
 
-public class 斗牛
+public class DickFighter
 {
     public static async Task FightInGroup(long user_id, long group_id)
     {
         string outputMessage;
 
-        var energyCost = LoadConfig.Load().DickData.FightEnergyCost;
+        var energyCost = ConfigLoader.Load().DickData.FightEnergyCost;
 
         var dickFighterDataBase = new DickFighterDataBase();
 
@@ -82,7 +82,7 @@ public class 斗牛
     {
         string outputMessage;
 
-        var energyCost = LoadConfig.Load().DickData.FightEnergyCost * 2;
+        var energyCost = ConfigLoader.Load().DickData.FightEnergyCost * 2;
 
         var dickFighterDataBase = new DickFighterDataBase();
 

@@ -7,7 +7,7 @@ namespace DickFighterBot.Functions;
 
 public class DickExercise
 {
-    private static readonly int exercisePerCost = LoadConfig.Load().DickData.ExerciseEnergyCost;
+    private static readonly int exercisePerCost = ConfigLoader.Load().DickData.ExerciseEnergyCost;
 
     public static async Task TryExercise(long user_id, long group_id, int exerciseTimes = 1)
     {
@@ -53,10 +53,10 @@ public class DickExercise
                     double perDifference;
                     if (newDick.Length < 0)
                         //如果牛子长度小于0，那么会获得锻炼补偿,帮助加速恢复正长度
-                        perDifference = GenerateRandom.GetRandomDouble(-5, 20) +
-                                        Math.Abs(GenerateRandom.GetRandomDouble(0.02, 0.04) * newDick.Length);
+                        perDifference = RandomGenerator.GetRandomDouble(-5, 20) +
+                                        Math.Abs(RandomGenerator.GetRandomDouble(0.02, 0.04) * newDick.Length);
                     else
-                        perDifference = GenerateRandom.GetRandomDouble(-5, 20);
+                        perDifference = RandomGenerator.GetRandomDouble(-5, 20);
 
                     newDick.Length += perDifference;
                 }
