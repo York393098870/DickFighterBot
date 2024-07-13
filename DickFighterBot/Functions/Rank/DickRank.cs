@@ -54,7 +54,7 @@ public class DickRank
             Logger.Info("全服牛子榜单已生成！");
         }
 
-        await WebSocketClient.Send(SendGroupMessage.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
     }
 
     public static async Task GetGroupRank(long group_id)
@@ -102,6 +102,6 @@ public class DickRank
             Logger.Info($"群{group_id}牛子榜单已生成！");
         }
 
-        await WebSocketClient.Send(SendGroupMessage.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
     }
 }

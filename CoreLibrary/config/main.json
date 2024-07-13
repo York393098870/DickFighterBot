@@ -9,7 +9,11 @@
     "ExerciseEnergyCost": 10
   },
   "Rank": {
-    "GroupRankTopCount": 2,
+    "GroupRankTopCount": 3,
     "GlobalRankTopCount": 3
+  },
+  "Management": {
+    "Administrator": 393098870
   }
 }
+

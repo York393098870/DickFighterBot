@@ -62,4 +62,35 @@ public partial class DickFighterDataBase
         var energyNow = Convert.ToInt32(energyLastUpdate + timeDifference / (6 * 60));
         return energyNow;
     }
+
+    private async Task<List<Dick.Dick>> CheckDickWithGroupId(long groupId)
+    {
+        //给定指定群号，查询群内所有牛子的信息
+        await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
+        await connection.OpenAsync();
+
+        var command = new SQLiteCommand(connection)
+        {
+            CommandText =
+                "SELECT * FROM BasicInformation WHERE GroupNumber = @GroupNumber"
+        };
+        command.Parameters.AddWithValue("@GroupNumber", groupId);
+
+        await using var reader = await command.ExecuteReaderAsync();
+
+        var dickList = new List<Dick.Dick>();
+
+        while (await reader.ReadAsync())
+        {
+            var dickBelongs = (long)reader["DickBelongings"];
+            var nickName = (string)reader["NickName"];
+            var length = (double)reader["Length"];
+            var guid = (string)reader["GUID"];
+
+            var dick = new Dick.Dick(dickBelongs, nickName, length, guid);
+            dickList.Add(dick);
+        }
+
+        return dickList;
+    }
 }

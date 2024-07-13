@@ -14,7 +14,7 @@ public class DickFighter
     {
         string outputMessage;
 
-        var energyCost = ConfigLoader.Load().DickData.FightEnergyCost;
+        var energyCost = ConfigLoader.Load().DickData.FightEnergyCost * 2;
 
         var dickFighterDataBase = new DickFighterDataBase();
 
@@ -75,14 +75,14 @@ public class DickFighter
             outputMessage = TipsMessage.DickNotFound(user_id);
         }
 
-        await WebSocketClient.Send(SendGroupMessage.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
     }
 
     public static async Task Fight(long user_id, long group_id)
     {
         string outputMessage;
 
-        var energyCost = ConfigLoader.Load().DickData.FightEnergyCost * 2;
+        var energyCost = ConfigLoader.Load().DickData.FightEnergyCost;
 
         var dickFighterDataBase = new DickFighterDataBase();
 
@@ -145,6 +145,6 @@ public class DickFighter
             outputMessage = TipsMessage.DickNotFound(user_id);
         }
 
-        await WebSocketClient.Send(SendGroupMessage.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
     }
 }

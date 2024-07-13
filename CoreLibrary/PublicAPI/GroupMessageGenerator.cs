@@ -2,7 +2,7 @@
 
 namespace CoreLibrary.PublicAPI;
 
-public class SendGroupMessage
+public class GroupMessageGenerator
 {
     public static string Generate(string message, long groupId)
     {

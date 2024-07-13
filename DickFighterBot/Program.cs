@@ -104,12 +104,12 @@ public class WebSocketClient
                         await DickExercise.TryExercise(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
-                    case "斗牛":
+                    case "群内斗牛":
                     {
                         await DickFighter.FightInGroup(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
-                    case "跨服斗牛":
+                    case "斗牛":
                     {
                         await DickFighter.Fight(messageReceived.user_id, messageReceived.group_id);
                         break;
@@ -129,6 +129,11 @@ public class WebSocketClient
                         await Coffee.DrinkCoffee(messageReceived.user_id, messageReceived.group_id);
                         break;
                     }
+                    case "升级牛子系统":
+                    {
+                        await DickFighterDataBase.UpdaterForProgram();
+                        break;
+                    }
                     default:
                     {
                         if (messageReceived.raw_message != null)
@@ -136,14 +141,30 @@ public class WebSocketClient
                             //不是空消息
 
                             if (messageReceived.raw_message.Contains("改牛子名"))
+                            {
                                 await DickNameChanger.Change(messageReceived.user_id,
                                     messageReceived.group_id,
                                     messageReceived.raw_message);
+                            }
 
                             if (messageReceived.raw_message.Contains("锻炼牛子"))
+                            {
                                 await DickExercise.IfNeedExercise(messageReceived.raw_message,
                                     messageReceived.user_id,
                                     messageReceived.group_id);
+                            }
+
+                            if (messageReceived.raw_message == "升级牛子系统" && messageReceived.user_id ==
+                                ConfigLoader.Load().Management.Administrator)
+                            {
+                                await DickFighterDataBase.UpdaterForProgram();
+                            }
+
+                            if (messageReceived.raw_message == "补偿体力" && messageReceived.user_id ==
+                                ConfigLoader.Load().Management.Administrator)
+                            {
+                                await Manager.EnergyAdd(messageReceived.group_id);
+                            }
                         }
 
                         break;

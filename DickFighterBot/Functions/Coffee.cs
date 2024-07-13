@@ -72,6 +72,6 @@ public class Coffee
             outputMessage = TipsMessage.DickNotFound(user_id);
         }
 
-        await WebSocketClient.Send(SendGroupMessage.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
     }
 }

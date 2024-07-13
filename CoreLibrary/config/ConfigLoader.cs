@@ -12,6 +12,8 @@ public class ConfigLoader
         public MainSettings MainSettings { get; set; }
         public DickData DickData { get; set; }
         public Rank Rank { get; set; }
+
+        public Management Management { get; set; }
     }
 
     public class MainSettings
@@ -31,6 +33,11 @@ public class ConfigLoader
     {
         public int GroupRankTopCount { get; set; }
         public int GlobalRankTopCount { get; set; }
+    }
+
+    public class Management
+    {
+        public long Administrator { get; set; }
     }
 
     private static string? _path;
@@ -65,9 +72,8 @@ public class ConfigLoader
         var programConfig = JsonSerializer.Deserialize<Config>(jsonString);
 
         if (programConfig != null) return programConfig;
-        
+
         Logger.Fatal("读取配置文件时出现问题！");
         throw new Exception($"配置文件读取错误，请检查配置文件{configName}是否存在！");
-
     }
 }

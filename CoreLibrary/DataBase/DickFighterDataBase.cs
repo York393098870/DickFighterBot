@@ -25,10 +25,29 @@ public partial class DickFighterDataBase
                                                   GroupNumber INTEGER
                                               );CREATE TABLE IF NOT EXISTS Energy(
                                                   DickGUID TEXT PRIMARY KEY,
-                                                  EnergyLastUpdate INTEGER,EnergyLastUpdateTime INTEGER);CREATE TABLE IF NOT EXISTS GachaInformation(GUID TEXT PRIMARY KEY,DickType INTEGER,WeaponType INTEGER,GachaTickets INTEGER);CREATE TABLE IF NOT EXISTS CoffeeInformation(GUID TEXT PRIMARY KEY,LastDrinkTime INTEGER)
+                                                  EnergyLastUpdate INTEGER,EnergyLastUpdateTime INTEGER);CREATE TABLE IF NOT EXISTS GachaInformation(GUID TEXT PRIMARY KEY,GachaCurrency INTEGER);CREATE TABLE IF NOT EXISTS CoffeeInformation(GUID TEXT PRIMARY KEY,LastDrinkTime INTEGER)
                           """ //创建数据库表
         };
         await command.ExecuteNonQueryAsync();
+    }
+
+    public static async Task UpdaterForProgram()
+    {
+        //用于程序更新时的数据库更新，可能会破坏性删除一些表
+        await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
+        await connection.OpenAsync();
+
+        var deleteList = new[] { "ExerciseRecord", "GachaInformation", "BattleRecord" };
+
+        //删除不用的表
+        foreach (var table in deleteList)
+        {
+            var deleteCommand = new SQLiteCommand(connection)
+            {
+                CommandText = "DROP TABLE IF EXISTS " + table
+            };
+            await deleteCommand.ExecuteNonQueryAsync();
+        }
     }
 
     public async Task<bool> GenerateNewDick(long userId, long groupId, Dick.Dick newDick)
@@ -113,7 +132,6 @@ public partial class DickFighterDataBase
             var dick = new Dick.Dick(
                 (long)reader["DickBelongings"],
                 reader["NickName"].ToString(),
-                
                 (double)reader["Length"],
                 reader["GUID"].ToString()
             );
@@ -123,7 +141,7 @@ public partial class DickFighterDataBase
         // 未找到符合条件的数据
         return null;
     }
-    
+
     public async Task<Dick.Dick?> GetRandomDick(string guid)
     {
         // 这个方法给定一个Guid，在数据库BasicInformation当中随机返回一行数据，并确保返回的数据中不包含与Guid相同的行。
@@ -148,7 +166,6 @@ public partial class DickFighterDataBase
             var dick = new Dick.Dick(
                 (long)reader["DickBelongings"],
                 reader["NickName"].ToString(),
-                
                 (double)reader["Length"],
                 reader["GUID"].ToString()
             );

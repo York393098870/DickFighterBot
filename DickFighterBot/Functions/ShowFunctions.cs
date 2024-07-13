@@ -16,6 +16,6 @@ public class ShowFunctions
                           "6. 牛子卡池：查看当前牛子卡池信息\n" +
                           "7. 群牛子榜/全服牛子榜：查看群内/全服牛子榜单\n" +
                           "8. 牛子咖啡：饮用一杯咖啡，回复一定的体力";
-        await WebSocketClient.Send(SendGroupMessage.Generate(helpMessage, group_id));
+        await WebSocketClient.Send(GroupMessageGenerator.Generate(helpMessage, group_id));
     }
 }
