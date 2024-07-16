@@ -35,7 +35,7 @@ public class 正则表达式
 
         var exerciseTimesAvailable = int.TryParse(match.Groups[1].Value, out var result);
 
-        if (exerciseTimesAvailable && result is > 0 and <= 100) return (exerciseTimes: result, ifNeedExercise: true);
+        if (exerciseTimesAvailable && result is > 0 and <= 241) return (exerciseTimes: result, ifNeedExercise: true);
 
         Logger.Warn("不合法的锻炼次数！");
         return (exerciseTimes: null, ifNeedExercise: false);

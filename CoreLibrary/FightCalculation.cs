@@ -6,7 +6,7 @@ namespace CoreLibrary;
 public class FightCalculation
 {
     //牛子对战的结果取决于以下几点：长度差（长度差越长，长的一方胜利的概率就越大）
-    
+
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
     public static (bool isWin, double challengerChange, double defenderChange, double winRatePct) Calculate(
@@ -14,7 +14,11 @@ public class FightCalculation
         double defenderLength, int morale, double differenceValue, int times = 1)
     {
         var differenceValueRate = Mapping.NewMapping(differenceValue);
-        var winRate = (1 / 10d) / 2 + (9 / 10d) / 2 * (differenceValueRate + 1);
+
+        //增加一个随机因素
+        var randomRate = RandomGenerator.GetRandomDouble() * 0.2d;
+
+        var winRate = randomRate + (8 / 10d) / 2 * (differenceValueRate + 1);
         var winRatePct = winRate * 100;
 
         var boolResult = RandomGenerator.GetRandomDouble() < winRate; //判定胜负

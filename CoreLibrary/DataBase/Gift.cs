@@ -19,7 +19,7 @@ public partial class DickFighterDataBase
         {
             var command = new SQLiteCommand(connection)
             {
-                CommandText = "UPDATE Energy SET EnergyLastUpdate=EnergyLastUpdate" + energyAdd +
+                CommandText = "UPDATE Energy SET EnergyLastUpdate=EnergyLastUpdate" + "+" + energyAdd +
                               " WHERE DickGUID=@GUID"
             };
 

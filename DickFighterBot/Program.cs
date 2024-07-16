@@ -134,6 +134,11 @@ public class WebSocketClient
                         await DickFighterDataBase.UpdaterForProgram();
                         break;
                     }
+                    case "真理牛子":
+                    {
+                        await 真理牛子.Logarithm(user_id: messageReceived.user_id, group_id: messageReceived.group_id);
+                        break;
+                    }
                     default:
                     {
                         if (messageReceived.raw_message != null)
