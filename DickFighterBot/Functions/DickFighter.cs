@@ -58,6 +58,8 @@ public class DickFighter
                     var stringMessage3 = $"\n目前，你的牛子体力值为{challengerDick.Energy}/240。";
 
                     outputMessage = stringMessage1 + stringMessage2 + stringMessage3;
+                    
+                    await 真理牛子.追加攻击(group_id:group_id,user_id:user_id);
                 }
                 else
                 {

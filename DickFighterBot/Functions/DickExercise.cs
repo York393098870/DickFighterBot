@@ -53,10 +53,12 @@ public class DickExercise
                     double perDifference;
                     if (newDick.Length < 0)
                         //如果牛子长度小于0，那么会获得锻炼补偿,帮助加速恢复正长度
-                        perDifference = RandomGenerator.GetRandomDouble(-5, 20) +
-                                        Math.Abs(RandomGenerator.GetRandomDouble(0.02, 0.04) * newDick.Length);
+                        perDifference = RandomGenerator.GetRandomDouble(-10, 40) +
+                                        Math.Abs(RandomGenerator.GetRandomDouble(0.1, 0.2) * newDick.Length) +
+                                        Math.Log(Math.Abs(newDick.Length) + 1);
                     else
-                        perDifference = RandomGenerator.GetRandomDouble(-5, 20);
+                        perDifference = RandomGenerator.GetRandomDouble(-10, 40) +
+                                        Math.Log(Math.Abs(newDick.Length) + 1);
 
                     newDick.Length += perDifference;
                 }
