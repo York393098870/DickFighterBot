@@ -1,14 +1,15 @@
 ﻿using CoreLibrary.DataBase;
+using CoreLibrary.Dick;
 using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
 
-namespace DickFighterBot.Functions;
+namespace DickFighterBot.Commands;
 
-public class 真理牛子
+public class TruthDick
 {
     //真理牛子可以将随机一只牛子的长度取对数，有效抑制膨胀
 
-    public static async Task Logarithm(long group_id, long user_id, int energyCost = 80)
+    public async Task 追加攻击(long user_id, long group_id, int energyCost = 60)
     {
         string outputMessage;
 
@@ -21,33 +22,61 @@ public class 真理牛子
 
         if (dickExisted)
         {
-            var currentEnergy = newDick.Energy = await dickFighterDataBase.CheckDickEnergyWithGuid(newDick.GUID);
+            var currentEnergy = await dickFighterDataBase.CheckDickEnergyWithGuid(newDick.GUID);
+            newDick.Energy = currentEnergy;
+            currentEnergy = newDick.Energy;
 
             if (currentEnergy >= energyCost)
             {
-                newDick.Energy = currentEnergy;
                 await dickFighterDataBase.UpdateDickEnergy(guid: newDick.GUID, energy:
                     currentEnergy - energyCost);
                 if (success)
                 {
                     //随机抓出一只牛子，取对数
-                    var enemyDick = await dickFighterDataBase.GetRandomDick(newDick.GUID);
+                    Dick? enemyDick;
+
+                    var randomNumber = Random.Shared.NextDouble();
+                    switch (randomNumber)
+                    {
+                        case < 1 / 3d:
+                            enemyDick = await dickFighterDataBase.GetRandomDick(newDick.GUID);
+                            break;
+                        case < 2 / 3d:
+                        {
+                            var resultOfFirstNList = await dickFighterDataBase.GetFirstNDicksByOrder(n: 1);
+                            enemyDick = resultOfFirstNList[0];
+                            break;
+                        }
+                        default:
+                        {
+                            var resultOfLastNList = await dickFighterDataBase.GetFirstNDicksByOrder(n: 1, order: 1);
+                            enemyDick = resultOfLastNList[0];
+                            break;
+                        }
+                    }
+
+                    // var enemyDick = await dickFighterDataBase.GetRandomDick(newDick.GUID);
+
                     var enemyOldLength = enemyDick.Length;
                     double newLength;
+
+                    var pctForCalculate = 0.999d; //取对数的比例，只有这一部分会被取对数
+                    var restPct = 1 - pctForCalculate;
                     if (enemyOldLength > 0)
                     {
-                        newLength = Math.Log(enemyOldLength * 0.99 + 1) + 0.01 * enemyOldLength;
+                        newLength = Math.Log(enemyOldLength * pctForCalculate + 1) + restPct * enemyOldLength;
                     }
                     else
                     {
-                        newLength = -Math.Log(Math.Abs(enemyOldLength * 0.99) + 1) + 0.01 * enemyOldLength;
+                        newLength = -Math.Log(Math.Abs(enemyOldLength * pctForCalculate) + 1) +
+                                    restPct * enemyOldLength;
                     }
 
                     var lengthDifference = newLength - enemyOldLength;
                     enemyDick.Length = newLength;
                     await dickFighterDataBase.UpdateDickLength(newLength, enemyDick.GUID);
 
-                    var winnerGet = -lengthDifference * RandomGenerator.GetRandomDouble(0.2, 0.3);
+                    var winnerGet = -lengthDifference * RandomGenerator.GetRandomDouble(0.01, 0.05);
                     newDick.Length += winnerGet;
                     await dickFighterDataBase.UpdateDickLength(newDick.Length, newDick.GUID);
 
@@ -76,7 +105,7 @@ public class 真理牛子
         await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
     }
 
-    public static async Task 追加攻击(long group_id, long user_id, double succeedRate = 0.25)
+    public async Task 弱化追加攻击(long user_id, long group_id, double succeedRate = 0.25)
     {
         //发动不消耗体力的追加攻击
         string outputMessage;

@@ -3,8 +3,6 @@ using System.Text;
 using System.Text.Json;
 using CoreLibrary.config;
 using CoreLibrary.DataBase;
-using DickFighterBot.Functions;
-using DickFighterBot.Functions.Rank;
 using NLog;
 
 namespace DickFighterBot;
@@ -73,57 +71,18 @@ public class WebSocketClient
             var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
             Logger.Trace("收到消息：" + receivedMessage);
 
+            var dispatcher = new CommandDispatcher();
+
             try
             {
                 var messageReceived = JsonSerializer.Deserialize<Message.GroupMessage>(receivedMessage); //反序列化收到的消息
 
-                switch (messageReceived?.raw_message)
+                if (messageReceived is { user_id: > 0, group_id: > 0 })
                 {
-                    case "/status":
-                    {
-                        await CurrentStatus.ShowStatus(messageReceived.group_id);
-                        break;
-                    }
-                    case "牛子帮助":
-                    {
-                        await ShowFunctions.ShowHelp(messageReceived.group_id);
-                        break;
-                    }
-                    case "生成牛子":
-                    {
-                        await NewDickGenerator.Generate(messageReceived.user_id, messageReceived.group_id);
-                        break;
-                    }
-                    case "我的牛子":
-                    {
-                        await DickChecker.CheckSelfDick(messageReceived.user_id, messageReceived.group_id);
-                        break;
-                    }
-                    case "锻炼牛子":
-                    {
-                        await DickExercise.TryExercise(messageReceived.user_id, messageReceived.group_id);
-                        break;
-                    }
-                    case "群内斗牛":
-                    {
-                        await DickFighter.FightInGroup(messageReceived.user_id, messageReceived.group_id);
-                        break;
-                    }
-                    case "斗牛":
-                    {
-                        await DickFighter.Fight(messageReceived.user_id, messageReceived.group_id);
-                        break;
-                    }
-                    case "全服牛子榜":
-                    {
-                        await DickRank.GetGlobalRank(messageReceived.group_id);
-                        break;
-                    }
-                    case "群牛子榜":
-                    {
-                        await DickRank.GetGroupRank(messageReceived.group_id);
-                        break;
-                    }
+                    await dispatcher.Dispatch(messageReceived.user_id, messageReceived.group_id, messageReceived);
+                }
+                /*switch (messageReceived?.raw_message)
+                {
                     case "牛子咖啡":
                     {
                         await Coffee.DrinkCoffee(messageReceived.user_id, messageReceived.group_id);
@@ -174,7 +133,7 @@ public class WebSocketClient
 
                         break;
                     }
-                }
+                }*/
             }
             catch (JsonException ex)
             {

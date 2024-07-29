@@ -3,14 +3,15 @@ using CoreLibrary.config;
 using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
+using DickFighterBot.Functions;
 
 #pragma warning disable CS8602 // 解引用可能出现空引用。
 
-namespace DickFighterBot.Functions;
+namespace DickFighterBot.Commands;
 
 public class DickFighter
 {
-    public static async Task FightInGroup(long user_id, long group_id)
+    public async Task FightInGroup(long user_id, long group_id, Message.GroupMessage message)
     {
         string outputMessage;
 
@@ -58,8 +59,6 @@ public class DickFighter
                     var stringMessage3 = $"\n目前，你的牛子体力值为{challengerDick.Energy}/240。";
 
                     outputMessage = stringMessage1 + stringMessage2 + stringMessage3;
-                    
-                    await 真理牛子.追加攻击(group_id:group_id,user_id:user_id);
                 }
                 else
                 {
@@ -80,7 +79,7 @@ public class DickFighter
         await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
     }
 
-    public static async Task Fight(long user_id, long group_id)
+    public async Task Fight(long user_id, long group_id, Message.GroupMessage message)
     {
         string outputMessage;
 
@@ -130,8 +129,6 @@ public class DickFighter
                     var stringMessage3 = $"\n目前，你的牛子体力值为{challengerDick.Energy}/240。";
 
                     outputMessage = stringMessage1 + stringMessage2 + stringMessage3;
-                    
-                    await 真理牛子.追加攻击(group_id:group_id,user_id:user_id);
                 }
                 else
                 {
