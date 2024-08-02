@@ -32,6 +32,8 @@ public class CommandDispatcher
         _commands.Add("真理牛子",
             (userId, groupId, groupMessage) => new TruthDick().追加攻击(userId, groupId));
         _commands.Add("牛子咖啡", (userId, groupId, groupMessage) => new Coffee().DrinkCoffee(userId, groupId));
+        _commands.Add("补偿体力",
+            (userId, groupId, groupMessage) => new AdminManager().维护补偿(userId, groupId, groupMessage));
     }
 
     public async Task Dispatch(long user_id, long group_id, Message.GroupMessage message)
@@ -54,9 +56,6 @@ public class CommandDispatcher
             {
                 await DickNameChanger.Change(user_id, group_id, rawMessage);
             }
-        }
-        else
-        {
         }
     }
 }

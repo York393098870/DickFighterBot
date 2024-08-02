@@ -38,29 +38,27 @@ public class TruthDick
                     var randomNumber = Random.Shared.NextDouble();
                     switch (randomNumber)
                     {
-                        case < 1 / 3d:
+                        case < 1 / 2d:
                             enemyDick = await dickFighterDataBase.GetRandomDick(newDick.GUID);
                             break;
-                        case < 2 / 3d:
+                        case < 3 / 4d:
                         {
-                            var resultOfFirstNList = await dickFighterDataBase.GetFirstNDicksByOrder(n: 1);
+                            var resultOfFirstNList = await dickFighterDataBase.GetFirstNDicksByOrder(n: 2);
                             enemyDick = resultOfFirstNList[0];
                             break;
                         }
                         default:
                         {
-                            var resultOfLastNList = await dickFighterDataBase.GetFirstNDicksByOrder(n: 1, order: 1);
+                            var resultOfLastNList = await dickFighterDataBase.GetFirstNDicksByOrder(n: 2, order: 1);
                             enemyDick = resultOfLastNList[0];
                             break;
                         }
                     }
 
-                    // var enemyDick = await dickFighterDataBase.GetRandomDick(newDick.GUID);
-
                     var enemyOldLength = enemyDick.Length;
                     double newLength;
 
-                    var pctForCalculate = 0.999d; //取对数的比例，只有这一部分会被取对数
+                    var pctForCalculate = 0.99d; //取对数的比例，只有这一部分会被取对数
                     var restPct = 1 - pctForCalculate;
                     if (enemyOldLength > 0)
                     {
@@ -76,7 +74,7 @@ public class TruthDick
                     enemyDick.Length = newLength;
                     await dickFighterDataBase.UpdateDickLength(newLength, enemyDick.GUID);
 
-                    var winnerGet = -lengthDifference * RandomGenerator.GetRandomDouble(0.01, 0.05);
+                    var winnerGet = -lengthDifference * RandomGenerator.GetRandomDouble(0.05, 0.1);
                     newDick.Length += winnerGet;
                     await dickFighterDataBase.UpdateDickLength(newDick.Length, newDick.GUID);
 

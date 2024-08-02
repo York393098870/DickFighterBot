@@ -3,7 +3,6 @@ using CoreLibrary.config;
 using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
-using DickFighterBot.Functions;
 
 #pragma warning disable CS8602 // 解引用可能出现空引用。
 
@@ -11,6 +10,16 @@ namespace DickFighterBot.Commands;
 
 public class DickFighter
 {
+    private double CalculateSmallerValue(double value, double length)
+    {
+        if (value > 0)
+        {
+            return Math.Min(Math.Abs(value), Math.Abs(length));
+        }
+
+        return -Math.Min(Math.Abs(value), Math.Abs(length));
+    }
+
     public async Task FightInGroup(long user_id, long group_id, Message.GroupMessage message)
     {
         string outputMessage;
@@ -113,6 +122,12 @@ public class DickFighter
                         defenderDick.Length, 0, challengerDick.Length - defenderDick.Length, 2);
                     var stringMessage1 =
                         $"[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，消耗{energyCost}点体力，向{defenderDick.Belongings}的牛子“{defenderDick.NickName}” 发起了跨服斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
+
+                    //限制长度变化，防止以小博大
+                    battleResult.challengerChange =
+                        CalculateSmallerValue(battleResult.challengerChange, challengerDick.Length);
+                    battleResult.defenderChange =
+                        CalculateSmallerValue(battleResult.defenderChange, defenderDick.Length);
 
                     //更新牛子长度
                     challengerDick.Length += battleResult.challengerChange;
