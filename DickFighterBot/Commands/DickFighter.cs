@@ -1,8 +1,8 @@
-﻿using CoreLibrary.config;
-using CoreLibrary.PublicAPI;
-using CoreLibrary.Tools;
+﻿using DickFighterBot.config;
 using DickFighterBot.DataBase;
 using DickFighterBot.Dick;
+using DickFighterBot.PublicAPI;
+using DickFighterBot.Tools;
 
 #pragma warning disable CS8602 // 解引用可能出现空引用。
 

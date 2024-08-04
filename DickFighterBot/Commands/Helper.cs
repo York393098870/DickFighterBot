@@ -1,5 +1,5 @@
-﻿using CoreLibrary.PublicAPI;
-using CoreLibrary.Tools;
+﻿using DickFighterBot.PublicAPI;
+using DickFighterBot.Tools;
 
 namespace DickFighterBot.Commands;
 

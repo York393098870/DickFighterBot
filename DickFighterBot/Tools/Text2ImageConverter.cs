@@ -1,6 +1,6 @@
 ﻿using SkiaSharp;
 
-namespace CoreLibrary.Tools;
+namespace DickFighterBot.Tools;
 
 public static class TextToImageConverter
 {

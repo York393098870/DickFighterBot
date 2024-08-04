@@ -1,4 +1,4 @@
-﻿namespace CoreLibrary.Tools;
+﻿namespace DickFighterBot.Tools;
 
 public class Mapping
 {

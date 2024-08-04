@@ -1,4 +1,4 @@
-﻿using CoreLibrary.Tools;
+﻿using DickFighterBot.Tools;
 
 namespace DickFighterBot.Dick;
 

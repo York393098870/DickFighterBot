@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace CoreLibrary.PublicAPI;
+namespace DickFighterBot.PublicAPI;
 
 public static class GroupMessageGenerator
 {

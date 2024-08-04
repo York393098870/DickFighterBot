@@ -1,6 +1,6 @@
-﻿using CoreLibrary.config;
-using CoreLibrary.PublicAPI;
+﻿using DickFighterBot.config;
 using DickFighterBot.DataBase;
+using DickFighterBot.PublicAPI;
 using NLog;
 
 namespace DickFighterBot.Commands;

@@ -1,7 +1,7 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
-using CoreLibrary.config;
+using DickFighterBot.config;
 using DickFighterBot.DataBase;
 using NLog;
 

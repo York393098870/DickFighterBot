@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using NLog;
 
-namespace CoreLibrary.config;
+namespace DickFighterBot.config;
 
 public class ConfigLoader
 {

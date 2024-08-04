@@ -1,4 +1,4 @@
-﻿using CoreLibrary.Tools;
+﻿using DickFighterBot.Tools;
 using NLog;
 
 namespace DickFighterBot.DataBase;

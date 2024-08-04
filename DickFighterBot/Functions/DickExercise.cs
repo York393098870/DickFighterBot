@@ -1,7 +1,7 @@
-﻿using CoreLibrary.config;
-using CoreLibrary.PublicAPI;
-using CoreLibrary.Tools;
+﻿using DickFighterBot.config;
 using DickFighterBot.DataBase;
+using DickFighterBot.PublicAPI;
+using DickFighterBot.Tools;
 
 namespace DickFighterBot.Functions;
 

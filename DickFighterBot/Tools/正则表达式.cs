@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using NLog;
 
-namespace CoreLibrary.Tools;
+namespace DickFighterBot.Tools;
 
 public class 正则表达式
 {

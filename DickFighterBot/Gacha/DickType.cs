@@ -1,4 +1,4 @@
-﻿namespace CoreLibrary.Gacha;
+﻿namespace DickFighterBot.Gacha;
 
 public enum DickType
 {

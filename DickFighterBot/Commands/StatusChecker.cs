@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using CoreLibrary.PublicAPI;
+using DickFighterBot.PublicAPI;
 
 namespace DickFighterBot.Commands;
 
