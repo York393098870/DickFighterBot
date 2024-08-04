@@ -32,7 +32,7 @@ public partial class Dick
                 enemyDick.Length += result.defenderChange;
 
                 var stringMessage1 =
-                    $"[CQ:at,qq={Belongings}],你的牛子[{NickName}]向{enemyDick.Belongings}的牛子[{enemyDick.NickName}]发起了跨服斗牛！本次斗牛消耗了{exercisePerCost}点体力，据牛科院物理研究所推测，你的牛子[{NickName}]胜率为{result.winRatePct:F1}%。";
+                    $"[CQ:at,qq={Belongings}] ,你的牛子[{NickName}]向{enemyDick.Belongings}的牛子[{enemyDick.NickName}]发起了跨服斗牛！本次斗牛消耗了{exercisePerCost}点体力，据牛科院物理研究所推测，你的牛子[{NickName}]胜率为{result.winRatePct:F1}%。";
                 var stringMessage2 = result.isWin
                     ? 文案生成器.WinWhenFight(Belongings, NickName, enemyDick.Belongings, enemyDick.NickName)
                     : 文案生成器.LoseWhenFight(Belongings, NickName, enemyDick.Belongings, enemyDick.NickName);
@@ -54,7 +54,7 @@ public partial class Dick
             return "当前服务器内牛子数量不足，不允许斗牛！";
         }
 
-        outputMessage = $"[CQ:at,qq={Belongings}],你都没有体力了，斗个√8毛！\n目前，你的牛子体力值为{Energy}/{MaxEnergy}。";
+        outputMessage = $"[CQ:at,qq={Belongings}] ,你都没有体力了，斗个√8毛！\n目前，你的牛子体力值为{Energy}/{MaxEnergy}。";
         return outputMessage;
     }
 }

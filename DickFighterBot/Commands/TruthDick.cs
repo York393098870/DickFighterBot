@@ -37,10 +37,10 @@ public class TruthDick
                     var randomNumber = Random.Shared.NextDouble();
                     switch (randomNumber)
                     {
-                        case < 1 / 2d:
+                        case < 1 / 5d:
                             enemyDick = await dickFighterDataBase.GetRandomDick(newDick.GUID);
                             break;
-                        case < 3 / 4d:
+                        case < 2 / 5d:
                         {
                             var resultOfFirstNList = await dickFighterDataBase.GetFirstNDicksByOrder(1);
                             enemyDick = resultOfFirstNList[0];

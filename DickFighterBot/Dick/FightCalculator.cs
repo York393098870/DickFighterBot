@@ -26,7 +26,8 @@ public class FightCalculator
         [
             absDifferenceValue * RandomGenerator.GetRandomDouble(0.1, 0.3) +
             RandomGenerator.GetRandomDouble(10, 20),
-            Math.Abs(challengerLength) * 0.98, Math.Abs(defenderLength) * 0.99
+            Math.Abs(challengerLength) * 0.98 + RandomGenerator.GetRandomDouble(5, 10),
+            Math.Abs(defenderLength) * 0.99 + RandomGenerator.GetRandomDouble(5, 10)
         ];
 
         //核心算法部分
