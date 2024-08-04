@@ -60,7 +60,7 @@ public partial class Dick
         if (result.ifExisted)
         {
             GUID = result.guid;
-            LoadWithGuid();
+            await LoadWithGuid();
         }
         else
         {
@@ -70,7 +70,7 @@ public partial class Dick
         return result.ifExisted;
     }
 
-    public async Task Save()
+    private async Task Save()
     {
         var dickFighterDataBase = new DickFighterDataBase();
         await dickFighterDataBase.UpdateDickEnergy(Energy, GUID);
