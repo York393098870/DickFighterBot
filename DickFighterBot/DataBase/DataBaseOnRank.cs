@@ -1,6 +1,6 @@
 ﻿using System.Data.SQLite;
 
-namespace CoreLibrary.DataBase;
+namespace DickFighterBot.DataBase;
 
 public partial class DickFighterDataBase
 {
@@ -84,11 +84,10 @@ public partial class DickFighterDataBase
         {
             var dickBelongings = Convert.ToInt64(reader["DickBelongings"]);
             var nickName = reader["NickName"].ToString();
-            var gender = Convert.ToInt32(reader["Gender"]);
             var length = Convert.ToDouble(reader["Length"]);
             var guid = Convert.ToString(reader["GUID"]);
 
-            var dick = new Dick.Dick(dickBelongings, nickName,  length, guid);
+            var dick = new Dick.Dick { Belongings = dickBelongings, NickName = nickName, Length = length, GUID = guid };
 
             dickList.Add(dick);
         }
@@ -140,7 +139,7 @@ public partial class DickFighterDataBase
             var length = Convert.ToDouble(reader["Length"]);
             var guid = Convert.ToString(reader["GUID"]);
 
-            var dick = new Dick.Dick(dickBelongings, nickName, length, guid);
+            var dick = new Dick.Dick { Belongings = dickBelongings, NickName = nickName, Length = length, GUID = guid };
 
             dickList.Add(dick);
         }

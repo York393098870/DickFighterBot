@@ -1,6 +1,6 @@
 ﻿using System.Data.SQLite;
 
-namespace CoreLibrary.DataBase;
+namespace DickFighterBot.DataBase;
 
 public partial class DickFighterDataBase
 {

@@ -1,7 +1,7 @@
 ﻿using System.Data.SQLite;
 using NLog;
 
-namespace CoreLibrary.DataBase;
+namespace DickFighterBot.DataBase;
 
 public partial class DickFighterDataBase
 {
@@ -60,36 +60,28 @@ public partial class DickFighterDataBase
 
             await using var transaction = await connection.BeginTransactionAsync();
 
-            var command1 = new SQLiteCommand(connection)
+            var command = new SQLiteCommand(connection)
             {
                 CommandText =
-                    "INSERT INTO BasicInformation (GUID, DickBelongings, NickName, Length, Gender, GroupNumber) " +
-                    "VALUES (@GUID, @DickBelongings, @NickName, @Length, @Gender, @GroupNumber)"
-            };
-            command1.Parameters.AddWithValue("@GUID", newDick.GUID);
-            command1.Parameters.AddWithValue("@DickBelongings", userId);
-            command1.Parameters.AddWithValue("@NickName", "未改名的牛子");
-            command1.Parameters.AddWithValue("@Length", newDick.Length);
-            command1.Parameters.AddWithValue("@Gender", 1);
-            command1.Parameters.AddWithValue("@GroupNumber", groupId);
-
-            // 执行插入操作
-            var rowsAffected1 = await command1.ExecuteNonQueryAsync();
-
-            // 为新牛子提供体力值
-            var command2 = new SQLiteCommand(connection)
-            {
-                CommandText =
+                    "INSERT INTO BasicInformation (GUID, DickBelongings, NickName, Length, GroupNumber) " +
+                    "VALUES (@GUID, @DickBelongings, @NickName, @Length,  @GroupNumber);" +
                     "INSERT INTO Energy (DickGUID, EnergyLastUpdate, EnergyLastUpdateTime) " +
                     "VALUES (@DickGUID, @EnergyLastUpdate, @EnergyLastUpdateTime)"
             };
-            command2.Parameters.AddWithValue("@DickGUID", newDick.GUID);
-            command2.Parameters.AddWithValue("@EnergyLastUpdate", 240);
-            command2.Parameters.AddWithValue("@EnergyLastUpdateTime", DateTimeOffset.Now.ToUnixTimeSeconds());
+            command.Parameters.AddWithValue("@GUID", newDick.GUID);
+            command.Parameters.AddWithValue("@DickBelongings", userId);
+            command.Parameters.AddWithValue("@NickName", "软弱牛子");
+            command.Parameters.AddWithValue("@Length", newDick.Length);
+            command.Parameters.AddWithValue("@GroupNumber", groupId);
 
-            var rowsAffected2 = await command2.ExecuteNonQueryAsync();
+            command.Parameters.AddWithValue("@DickGUID", newDick.GUID);
+            command.Parameters.AddWithValue("@EnergyLastUpdate", 240);
+            command.Parameters.AddWithValue("@EnergyLastUpdateTime", DateTimeOffset.Now.ToUnixTimeSeconds());
 
-            if (rowsAffected1 > 0 && rowsAffected2 > 0)
+            // 执行插入操作
+            var rowsAffected = await command.ExecuteNonQueryAsync();
+
+            if (rowsAffected > 0)
             {
                 await transaction.CommitAsync();
                 return true;
@@ -102,7 +94,6 @@ public partial class DickFighterDataBase
         {
             // 处理异常，例如记录错误日志
             Logger.Error($"数据库操作：生成新牛子时发生错误：{e.Message}");
-            // 返回插入失败
             return false;
         }
     }
@@ -127,19 +118,16 @@ public partial class DickFighterDataBase
         await using var reader = await command.ExecuteReaderAsync();
 
         // 处理查询结果
-        if (await reader.ReadAsync())
-        {
-            var dick = new Dick.Dick(
-                (long)reader["DickBelongings"],
-                reader["NickName"].ToString(),
-                (double)reader["Length"],
-                reader["GUID"].ToString()
-            );
-            return dick;
-        }
+        if (!await reader.ReadAsync()) return null;
 
-        // 未找到符合条件的数据
-        return null;
+        var dick = new Dick.Dick
+        {
+            Belongings = (long)reader["DickBelongings"], NickName = reader["NickName"].ToString(),
+            Length = (double)reader["Length"],
+            GUID = reader["GUID"].ToString()
+        };
+
+        return dick;
     }
 
     public async Task<Dick.Dick?> GetRandomDick(string guid)
@@ -161,19 +149,14 @@ public partial class DickFighterDataBase
         await using var reader = await command.ExecuteReaderAsync();
 
         // 处理查询结果
-        if (await reader.ReadAsync())
+        if (!await reader.ReadAsync()) return null;
+        var dick = new Dick.Dick
         {
-            var dick = new Dick.Dick(
-                (long)reader["DickBelongings"],
-                reader["NickName"].ToString(),
-                (double)reader["Length"],
-                reader["GUID"].ToString()
-            );
-            return dick;
-        }
-
-        // 未找到符合条件的数据
-        return null;
+            Belongings = (long)reader["DickBelongings"], NickName = reader["NickName"].ToString(),
+            Length = (double)reader["Length"],
+            GUID = reader["GUID"].ToString()
+        };
+        return dick;
     }
 
     public async Task<(int globalRank, int globalTotal, int groupRank, int groupTotal)> GetLengthRanks(

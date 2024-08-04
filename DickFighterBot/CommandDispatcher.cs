@@ -10,7 +10,7 @@ public class CommandDispatcher
 {
     //命令调度器，根据收到的消息内容，分发到对应的命令执行器
 
-    private Dictionary<string, Func<long, long, Message.GroupMessage, Task>> _commands = new();
+    private readonly Dictionary<string, Func<long, long, Message.GroupMessage, Task>> _commands = new();
 
     public CommandDispatcher()
     {
@@ -22,9 +22,7 @@ public class CommandDispatcher
             (userId, groupId, groupMessage) => new DickChecker().CheckSelfDick(userId, groupId, groupMessage));
         _commands.Add("生成牛子",
             (userId, groupId, groupMessage) => new DickGenerator().Generate(userId, groupId, groupMessage));
-        _commands.Add("斗牛", (userId, groupId, groupMessage) => new DickFighter().Fight(userId, groupId, groupMessage));
-        _commands.Add("群内斗牛",
-            (userId, groupId, groupMessage) => new DickFighter().FightInGroup(userId, groupId, groupMessage));
+        _commands.Add("斗牛", (userId, groupId, _) => new DickFighter().NewFight(userId, groupId));
         _commands.Add("群牛子榜",
             (userId, groupId, groupMessage) => new DickRank().GetGroupRank(userId, groupId, groupMessage));
         _commands.Add("全服牛子榜",
@@ -49,13 +47,8 @@ public class CommandDispatcher
         {
             //处理非常规命令，例如含有参数的命令
             if (rawMessage.Contains("锻炼牛子"))
-            {
                 await DickExercise.IfNeedExercise(rawMessage, user_id, group_id);
-            }
-            else if (rawMessage.Contains("改牛子名"))
-            {
-                await DickNameChanger.Change(user_id, group_id, rawMessage);
-            }
+            else if (rawMessage.Contains("改牛子名")) await DickNameChanger.Change(user_id, group_id, rawMessage);
         }
     }
 }

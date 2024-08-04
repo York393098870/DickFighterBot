@@ -1,8 +1,8 @@
-﻿using CoreLibrary;
-using CoreLibrary.config;
-using CoreLibrary.DataBase;
+﻿using CoreLibrary.config;
 using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
+using DickFighterBot.DataBase;
+using DickFighterBot.Dick;
 
 #pragma warning disable CS8602 // 解引用可能出现空引用。
 
@@ -12,10 +12,7 @@ public class DickFighter
 {
     private double CalculateSmallerValue(double value, double length)
     {
-        if (value > 0)
-        {
-            return Math.Min(Math.Abs(value), Math.Abs(length));
-        }
+        if (value > 0) return Math.Min(Math.Abs(value), Math.Abs(length));
 
         return -Math.Min(Math.Abs(value), Math.Abs(length));
     }
@@ -29,7 +26,7 @@ public class DickFighter
         var dickFighterDataBase = new DickFighterDataBase();
 
         var (dickExisted, challengerDick) =
-            await dickFighterDataBase.CheckDickWithIds(user_id,
+            await dickFighterDataBase.GetDickWithIds(user_id,
                 group_id);
         if (dickExisted)
         {
@@ -48,8 +45,8 @@ public class DickFighter
                     challengerDick.GUID); //防止自己打自己
                 if (defenderDick != null)
                 {
-                    var battleResult = FightCalculation.Calculate(challengerDick.Length,
-                        defenderDick.Length, 0, challengerDick.Length - defenderDick.Length);
+                    var battleResult = FightCalculator.Calculate(challengerDick.Length,
+                        defenderDick.Length, challengerDick.Length - defenderDick.Length);
                     var stringMessage1 =
                         $"[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，消耗{energyCost}点体力，向 {defenderDick.Belongings}的牛子“{defenderDick.NickName}” 发起了斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
 
@@ -97,7 +94,7 @@ public class DickFighter
         var dickFighterDataBase = new DickFighterDataBase();
 
         var (dickExisted, challengerDick) =
-            await dickFighterDataBase.CheckDickWithIds(user_id,
+            await dickFighterDataBase.GetDickWithIds(user_id,
                 group_id);
 
         if (dickExisted)
@@ -118,8 +115,8 @@ public class DickFighter
 
                 if (defenderDick != null)
                 {
-                    var battleResult = FightCalculation.Calculate(challengerDick.Length,
-                        defenderDick.Length, 0, challengerDick.Length - defenderDick.Length, 2);
+                    var battleResult = FightCalculator.Calculate(challengerDick.Length,
+                        defenderDick.Length, challengerDick.Length - defenderDick.Length);
                     var stringMessage1 =
                         $"[CQ:at,qq={user_id}]，你的牛子“{challengerDick.NickName}”，消耗{energyCost}点体力，向{defenderDick.Belongings}的牛子“{defenderDick.NickName}” 发起了跨服斗牛！根据牛科院物理研究所计算，你的牛子胜率为{battleResult.winRatePct:F1}%。";
 
@@ -159,6 +156,23 @@ public class DickFighter
         else
         {
             outputMessage = TipsMessage.DickNotFound(user_id);
+        }
+
+        await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
+    }
+
+    public async Task NewFight(long user_id, long group_id)
+    {
+        var dick = new Dick.Dick { Belongings = user_id, GroupNumber = group_id };
+        var ifExisted = await dick.LoadWithIds();
+        string outputMessage;
+        if (ifExisted == false)
+        {
+            outputMessage = TipsMessage.DickNotFound(dick.Belongings);
+        }
+        else
+        {
+            outputMessage = await dick.Fight();
         }
 
         await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));

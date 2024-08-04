@@ -1,6 +1,6 @@
-﻿using CoreLibrary.DataBase;
-using CoreLibrary.PublicAPI;
+﻿using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
+using DickFighterBot.DataBase;
 using NLog;
 
 namespace DickFighterBot.Commands;
@@ -14,7 +14,7 @@ public class Coffee
         string outputMessage;
         const int energyAdd = 60;
         var dickFighterDataBase = new DickFighterDataBase();
-        var (dickExisted, dick) = await dickFighterDataBase.CheckDickWithIds(user_id, group_id);
+        var (dickExisted, dick) = await dickFighterDataBase.GetDickWithIds(user_id, group_id);
 
         if (dickExisted)
         {

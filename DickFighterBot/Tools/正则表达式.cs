@@ -16,9 +16,7 @@ public class 正则表达式
 
         // 检查匹配结果
         if (match.Success && match.Groups[1].Value.Length <= 30)
-        {
             return (newName: match.Groups[1].Value, ifNeedEdit: true);
-        }
 
         return (newName: null, ifNeedEdit: false);
     }

@@ -18,9 +18,8 @@ public class Helper
                           "7. 群牛子榜/全服牛子榜：查看群内/全服牛子榜单\n" +
                           "8. 牛子咖啡：饮用一杯咖啡，回复一定的体力,每20个小时可以饮用一次\n" +
                           "9. 真理牛子：一个临时试用牛子，花费大量体力对随机牛子发动追加攻击，\n追加攻击一旦成功，对方牛子将会被取对数，自己也会获得一部分收益。\n";
-        string outputMessage;
         var outputPhoto = TextToImageConverter.ConvertToBase64(helpMessage);
-        outputMessage = $"[CQ:image,file=base64://{outputPhoto}]";
+        var outputMessage = $"[CQ:image,file=base64://{outputPhoto}]";
         await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
     }
 }

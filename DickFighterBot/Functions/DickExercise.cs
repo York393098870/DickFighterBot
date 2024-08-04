@@ -1,7 +1,7 @@
 ﻿using CoreLibrary.config;
-using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
+using DickFighterBot.DataBase;
 
 namespace DickFighterBot.Functions;
 
@@ -30,7 +30,7 @@ public class DickExercise
 
         //查询是否已经存在牛子
         var (dickExisted, newDick) =
-            await dickFighterDataBase.CheckDickWithIds(user_id,
+            await dickFighterDataBase.GetDickWithIds(user_id,
                 group_id);
         if (dickExisted)
         {

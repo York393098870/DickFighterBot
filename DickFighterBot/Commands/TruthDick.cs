@@ -1,7 +1,6 @@
-﻿using CoreLibrary.DataBase;
-using CoreLibrary.Dick;
-using CoreLibrary.PublicAPI;
+﻿using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
+using DickFighterBot.DataBase;
 
 namespace DickFighterBot.Commands;
 
@@ -18,7 +17,7 @@ public class TruthDick
         var success = Random.Shared.NextDouble() < successRate;
         var dickFighterDataBase = new DickFighterDataBase();
 
-        var (dickExisted, newDick) = await dickFighterDataBase.CheckDickWithIds(user_id, group_id);
+        var (dickExisted, newDick) = await dickFighterDataBase.GetDickWithIds(user_id, group_id);
 
         if (dickExisted)
         {
@@ -33,7 +32,7 @@ public class TruthDick
                 if (success)
                 {
                     //随机抓出一只牛子，取对数
-                    Dick? enemyDick;
+                    Dick.Dick? enemyDick;
 
                     var randomNumber = Random.Shared.NextDouble();
                     switch (randomNumber)
@@ -43,13 +42,13 @@ public class TruthDick
                             break;
                         case < 3 / 4d:
                         {
-                            var resultOfFirstNList = await dickFighterDataBase.GetFirstNDicksByOrder(n: 2);
+                            var resultOfFirstNList = await dickFighterDataBase.GetFirstNDicksByOrder(1);
                             enemyDick = resultOfFirstNList[0];
                             break;
                         }
                         default:
                         {
-                            var resultOfLastNList = await dickFighterDataBase.GetFirstNDicksByOrder(n: 2, order: 1);
+                            var resultOfLastNList = await dickFighterDataBase.GetFirstNDicksByOrder(1, 1);
                             enemyDick = resultOfLastNList[0];
                             break;
                         }
@@ -58,23 +57,19 @@ public class TruthDick
                     var enemyOldLength = enemyDick.Length;
                     double newLength;
 
-                    var pctForCalculate = 0.99d; //取对数的比例，只有这一部分会被取对数
+                    var pctForCalculate = 0.9d; //取对数的比例，只有这一部分会被取对数
                     var restPct = 1 - pctForCalculate;
                     if (enemyOldLength > 0)
-                    {
                         newLength = Math.Log(enemyOldLength * pctForCalculate + 1) + restPct * enemyOldLength;
-                    }
                     else
-                    {
                         newLength = -Math.Log(Math.Abs(enemyOldLength * pctForCalculate) + 1) +
                                     restPct * enemyOldLength;
-                    }
 
                     var lengthDifference = newLength - enemyOldLength;
                     enemyDick.Length = newLength;
                     await dickFighterDataBase.UpdateDickLength(newLength, enemyDick.GUID);
 
-                    var winnerGet = -lengthDifference * RandomGenerator.GetRandomDouble(0.05, 0.1);
+                    var winnerGet = -lengthDifference * RandomGenerator.GetRandomDouble(0.1, 0.2);
                     newDick.Length += winnerGet;
                     await dickFighterDataBase.UpdateDickLength(newDick.Length, newDick.GUID);
 
@@ -113,7 +108,7 @@ public class TruthDick
         var success = Random.Shared.NextDouble() < successRate;
         var dickFighterDataBase = new DickFighterDataBase();
 
-        var (dickExisted, newDick) = await dickFighterDataBase.CheckDickWithIds(user_id, group_id);
+        var (dickExisted, newDick) = await dickFighterDataBase.GetDickWithIds(user_id, group_id);
 
         if (dickExisted)
         {
@@ -127,14 +122,10 @@ public class TruthDick
                 var pctForCalculate = 0.8d; //取对数的比例，只有这一部分会被取对数
 
                 if (enemyOldLength > 0)
-                {
                     newLength = Math.Log(enemyOldLength * pctForCalculate + 1) + (1 - pctForCalculate) * enemyOldLength;
-                }
                 else
-                {
                     newLength = -Math.Log(Math.Abs(enemyOldLength * pctForCalculate) + 1) +
                                 (1 - pctForCalculate) * enemyOldLength;
-                }
 
                 var lengthDifference = newLength - enemyOldLength;
                 enemyDick.Length = newLength;

@@ -1,6 +1,6 @@
 ﻿using System.Data.SQLite;
 
-namespace CoreLibrary.DataBase;
+namespace DickFighterBot.DataBase;
 
 public partial class DickFighterDataBase
 {
@@ -21,10 +21,7 @@ public partial class DickFighterDataBase
 
             await using var reader = await command.ExecuteReaderAsync();
 
-            if (!await reader.ReadAsync())
-            {
-                return (false, -1);
-            }
+            if (!await reader.ReadAsync()) return (false, -1);
 
             var timeResult = Convert.ToInt64(reader["LastDrinkTime"]);
             return (true, timeResult);
@@ -55,10 +52,7 @@ public partial class DickFighterDataBase
 
             var rowsAffected = await command.ExecuteNonQueryAsync();
 
-            if (rowsAffected == 1)
-            {
-                return true;
-            }
+            if (rowsAffected == 1) return true;
 
             Logger.Error("创建咖啡数据时出现错误！");
             return false;
@@ -88,10 +82,7 @@ public partial class DickFighterDataBase
 
             var rowsAffected = await command.ExecuteNonQueryAsync();
 
-            if (rowsAffected == 1)
-            {
-                return true;
-            }
+            if (rowsAffected == 1) return true;
 
             Logger.Error("饮用咖啡时出现错误！");
             return false;

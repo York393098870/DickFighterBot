@@ -1,6 +1,6 @@
 ﻿using System.Data.SQLite;
 
-namespace CoreLibrary.DataBase;
+namespace DickFighterBot.DataBase;
 
 public partial class DickFighterDataBase
 {
@@ -32,7 +32,6 @@ public partial class DickFighterDataBase
         throw new Exception("检查牛子信息时发生致命错误！");
     }
 
-    
 
     private async Task<bool> CreateNewGachaRecord(string guid)
     {

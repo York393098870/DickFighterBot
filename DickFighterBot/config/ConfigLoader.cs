@@ -7,39 +7,6 @@ public class ConfigLoader
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); //获取日志记录器
 
-    public class Config
-    {
-        public MainSettings MainSettings { get; set; }
-        public DickData DickData { get; set; }
-        public Rank Rank { get; set; }
-
-        public Management Management { get; set; }
-    }
-
-    public class MainSettings
-    {
-        public string ws_host { get; set; }
-        public int port { get; set; }
-        public int Interval { get; set; }
-    }
-
-    public class DickData
-    {
-        public int ExerciseEnergyCost { get; set; }
-        public int FightEnergyCost { get; set; }
-    }
-
-    public class Rank
-    {
-        public int GroupRankTopCount { get; set; }
-        public int GlobalRankTopCount { get; set; }
-    }
-
-    public class Management
-    {
-        public long Administrator { get; set; }
-    }
-
     private static string? _path;
 
     private static string LocalProgramPath
@@ -75,5 +42,38 @@ public class ConfigLoader
 
         Logger.Fatal("读取配置文件时出现问题！");
         throw new Exception($"配置文件读取错误，请检查配置文件{configName}是否存在！");
+    }
+
+    public class Config
+    {
+        public MainSettings MainSettings { get; set; }
+        public DickData DickData { get; set; }
+        public Rank Rank { get; set; }
+
+        public Management Management { get; set; }
+    }
+
+    public class MainSettings
+    {
+        public string ws_host { get; set; }
+        public int port { get; set; }
+        public int Interval { get; set; }
+    }
+
+    public class DickData
+    {
+        public int ExerciseEnergyCost { get; set; }
+        public int FightEnergyCost { get; set; }
+    }
+
+    public class Rank
+    {
+        public int GroupRankTopCount { get; set; }
+        public int GlobalRankTopCount { get; set; }
+    }
+
+    public class Management
+    {
+        public long Administrator { get; set; }
     }
 }

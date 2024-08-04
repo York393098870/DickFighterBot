@@ -1,7 +1,6 @@
-﻿using CoreLibrary.DataBase;
-using CoreLibrary.Dick;
-using CoreLibrary.PublicAPI;
+﻿using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
+using DickFighterBot.DataBase;
 
 namespace DickFighterBot.Commands;
 
@@ -13,7 +12,7 @@ public class DickGenerator
 
         //判断是否已经有了牛子
         var checkResult =
-            await dickFighterDataBase.CheckDickWithIds(user_id,
+            await dickFighterDataBase.GetDickWithIds(user_id,
                 group_id);
         var ifExist = checkResult.Item1;
 
@@ -26,8 +25,11 @@ public class DickGenerator
         else
         {
             var newGuid = Guid.NewGuid().ToString();
-            var newDick = new Dick(user_id, "未改名的牛子",
-                RandomGenerator.GetRandomDouble(5d, 15d), newGuid);
+            var newDick = new Dick.Dick
+            {
+                Belongings = user_id, NickName = "软弱牛子", Length = RandomGenerator.GetRandomDouble(5d, 15d),
+                GUID = newGuid
+            };
 
             await dickFighterDataBase.GenerateNewDick(user_id, group_id,
                 newDick);

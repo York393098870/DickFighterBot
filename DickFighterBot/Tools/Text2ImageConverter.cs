@@ -4,32 +4,6 @@ namespace CoreLibrary.Tools;
 
 public static class TextToImageConverter
 {
-    public static string ConvertSingleLineToBase64(string text, int textSize = 16)
-    {
-        //指定字体黑体，将给定的string转化成Base64编码的图片
-        var textPaint = new SKPaint
-        {
-            Color = SKColors.Black,
-            IsAntialias = true,
-            Style = SKPaintStyle.Fill,
-            TextAlign = SKTextAlign.Left,
-            TextSize = textSize
-        };
-
-        var bounds = new SKRect();
-        textPaint.MeasureText(text, ref bounds);
-
-        var bitmap = new SKBitmap((int)Math.Ceiling(bounds.Width), (int)Math.Ceiling(bounds.Height));
-        using var canvas = new SKCanvas(bitmap);
-        canvas.Clear(SKColors.White);
-
-        canvas.DrawText(text, -bounds.Left, -bounds.Top, textPaint);
-
-        using var image = SKImage.FromBitmap(bitmap);
-        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-        return Convert.ToBase64String(data.ToArray());
-    }
-
     public static string ConvertToBase64(string text, int textSize = 16)
     {
         var textPaint = new SKPaint
@@ -39,7 +13,7 @@ public static class TextToImageConverter
             Style = SKPaintStyle.Fill,
             TextAlign = SKTextAlign.Left,
             TextSize = textSize,
-            Typeface = SKTypeface.FromFamilyName("黑体")
+            Typeface = SKTypeface.FromFamilyName("SimSun")
         };
 
         var lines = text.Split('\n');

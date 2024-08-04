@@ -1,6 +1,6 @@
-﻿using CoreLibrary.DataBase;
-using CoreLibrary.PublicAPI;
+﻿using CoreLibrary.PublicAPI;
 using CoreLibrary.Tools;
+using DickFighterBot.DataBase;
 using NLog;
 
 namespace DickFighterBot.Functions;
@@ -15,7 +15,7 @@ public class DickNameChanger
         var dickFighterDataBase = new DickFighterDataBase();
 
         var (dickExisted, newDick) =
-            await dickFighterDataBase.CheckDickWithIds(user_id,
+            await dickFighterDataBase.GetDickWithIds(user_id,
                 group_id);
 
         if (ifNeedEdit)

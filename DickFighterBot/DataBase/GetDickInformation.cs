@@ -1,10 +1,10 @@
 ﻿using System.Data.SQLite;
 
-namespace CoreLibrary.DataBase;
+namespace DickFighterBot.DataBase;
 
 public partial class DickFighterDataBase
 {
-    public async Task<(bool ifExisted, Dick.Dick? dick)> CheckDickWithIds(long userId, long groupId)
+    public async Task<(bool ifExisted, Dick.Dick? dick)> GetDickWithIds(long userId, long groupId)
     {
         //给定指定QQ号和群号，查询牛子是否存在并返回结果
         await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
@@ -24,17 +24,62 @@ public partial class DickFighterDataBase
 
         if (await reader.ReadAsync())
         {
-            var dickBelongs = (long)reader["DickBelongings"];
+            var dickBelongings = (long)reader["DickBelongings"];
             var nickName = (string)reader["NickName"];
             var length = (double)reader["Length"];
             var guid = (string)reader["GUID"];
 
-            dick = new Dick.Dick(belongings: dickBelongs, nickName: nickName, length: length, guid: guid);
+            dick = new Dick.Dick { Belongings = dickBelongings, NickName = nickName, Length = length, GUID = guid };
             return (ifExisted: true, dick);
         }
 
         dick = null;
         return (ifExisted: false, dick);
+    }
+
+    public async Task<(bool ifExisted, string? guid)> CheckGuidWithTwoIds(long userId, long groupId)
+    {
+        await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
+        await connection.OpenAsync();
+        var command = new SQLiteCommand(connection)
+        {
+            CommandText =
+                "SELECT GUID FROM BasicInformation WHERE DickBelongings = @DickBelongings AND GroupNumber = @GroupNumber"
+        };
+        command.Parameters.AddWithValue("@DickBelongings", userId);
+        command.Parameters.AddWithValue("@GroupNumber", groupId);
+
+        await using var reader = await command.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync()) return (true, (string)reader["GUID"]);
+
+        return (false, null);
+    }
+
+    public async Task<(bool ifExisted, long dickBelongings, long groupNumber, string dickName, double length)>
+        CheckDickWithGuid(string guid)
+    {
+        //给定guid，返回结果
+        await using var connection = new SQLiteConnection(DatabaseConnectionManager.ConnectionString);
+        await connection.OpenAsync();
+
+        var command = new SQLiteCommand(connection)
+        {
+            CommandText =
+                "SELECT DickBelongings,GroupNumber, NickName, Length FROM BasicInformation WHERE GUID = @guid"
+        };
+        command.Parameters.AddWithValue("@guid", guid);
+
+        await using var reader = await command.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync()) return (false, 0, 0, "", 0);
+
+        var dickBelongs = (long)reader["DickBelongings"];
+        var groupNumber = (long)reader["GroupNumber"];
+        var nickName = (string)reader["NickName"];
+        var length = (double)reader["Length"];
+
+        return (true, dickBelongs, groupNumber, nickName, length);
     }
 
     public async Task<int> CheckDickEnergyWithGuid(string guid)
@@ -87,7 +132,7 @@ public partial class DickFighterDataBase
             var length = (double)reader["Length"];
             var guid = (string)reader["GUID"];
 
-            var dick = new Dick.Dick(dickBelongs, nickName, length, guid);
+            var dick = new Dick.Dick { Belongings = dickBelongs, NickName = nickName, Length = length, GUID = guid };
             dickList.Add(dick);
         }
 

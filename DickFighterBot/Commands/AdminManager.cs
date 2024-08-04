@@ -1,6 +1,6 @@
 ﻿using CoreLibrary.config;
-using CoreLibrary.DataBase;
 using CoreLibrary.PublicAPI;
+using DickFighterBot.DataBase;
 
 namespace DickFighterBot.Commands;
 
@@ -22,10 +22,8 @@ public class AdminManager
             var compensationResult = await dickFighterDataBase.Compensation(group_id, energyCompensate);
 
             if (compensationResult)
-            {
                 await WebSocketClient.Send(GroupMessageGenerator.Generate($"管理员已经为当前群玩家补偿{energyCompensate}点体力！",
                     group_id));
-            }
         }
     }
 }

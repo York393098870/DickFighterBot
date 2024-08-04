@@ -1,7 +1,7 @@
 ﻿using CoreLibrary.Tools;
 using NLog;
 
-namespace CoreLibrary.DataBase;
+namespace DickFighterBot.DataBase;
 
 public static class DatabaseConnectionManager
 {
