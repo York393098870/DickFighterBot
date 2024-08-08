@@ -21,4 +21,8 @@
         </EditorConfigFiles>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Res\" />
+    </ItemGroup>
+
 </Project>
