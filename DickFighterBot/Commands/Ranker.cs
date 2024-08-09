@@ -65,7 +65,7 @@ public class DickRank
 
         var dataBase = new DickFighterDataBase();
 
-        var count = await dataBase.GetCountOfTotalDicks(); //获取数据库中牛子的总数，以确认要显示几个牛子
+        var count = await dataBase.GetCountOfTotalDicks(group_id); //获取数据库中牛子的总数，以确认要显示几个牛子
 
         if (count <= 0)
         {
