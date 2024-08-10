@@ -2,6 +2,7 @@
 using DickFighterBot.DataBase;
 using DickFighterBot.PublicAPI;
 using NLog;
+using NLog.Fluent;
 
 namespace DickFighterBot.Commands;
 
@@ -57,7 +58,7 @@ public class DickRank
         await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
     }
 
-    public async Task GetGroupRank(long user_id, long group_id, Message.GroupMessage message)
+    public async Task GetGroupRank(long group_id)
     {
         string outputMessage;
 
@@ -77,6 +78,8 @@ public class DickRank
             //由于数据库中的牛子往往非常的多，在此，我们只会显示前n个牛子的排名，假如n小于数据库中的牛子总数，显示全部牛子的排名
 
             var dickCount = Math.Min(count, n); //与其使用条件运算符，不如使用Math.Min()函数
+
+            Logger.Debug($"当前的dickCount{dickCount}");
 
             var dickList = await dataBase.GetFirstNDicksByOrder(dickCount, group_id); //获取前n个牛子
 

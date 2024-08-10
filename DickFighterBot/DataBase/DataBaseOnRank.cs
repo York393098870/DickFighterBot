@@ -135,7 +135,6 @@ public partial class DickFighterDataBase
         {
             var dickBelongings = Convert.ToInt64(reader["DickBelongings"]);
             var nickName = reader["NickName"].ToString();
-            var gender = Convert.ToInt32(reader["Gender"]);
             var length = Convert.ToDouble(reader["Length"]);
             var guid = Convert.ToString(reader["GUID"]);
 

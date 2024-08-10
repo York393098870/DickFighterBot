@@ -24,12 +24,12 @@ public class CommandDispatcher
             (userId, groupId, groupMessage) => new DickGenerator().Generate(userId, groupId, groupMessage));
         _commands.Add("斗牛", (userId, groupId, _) => new DickFighter().NewFight(userId, groupId));
         _commands.Add("群牛子榜",
-            (userId, groupId, groupMessage) => new DickRank().GetGroupRank(userId, groupId, groupMessage));
+            (_, groupId, _) => new DickRank().GetGroupRank(groupId));
         _commands.Add("全服牛子榜",
             (userId, groupId, groupMessage) => new DickRank().GetGlobalRank(userId, groupId, groupMessage));
         _commands.Add("真理牛子",
-            (userId, groupId, groupMessage) => new TruthDick().追加攻击(userId, groupId));
-        _commands.Add("牛子咖啡", (userId, groupId, groupMessage) => new Coffee().DrinkCoffee(userId, groupId));
+            (userId, groupId, _) => new TruthDick().追加攻击(userId, groupId));
+        _commands.Add("牛子咖啡", (userId, groupId, _) => new Coffee().DrinkCoffee(userId, groupId));
         _commands.Add("补偿体力",
             (userId, groupId, groupMessage) => new AdminManager().维护补偿(userId, groupId, groupMessage));
     }
