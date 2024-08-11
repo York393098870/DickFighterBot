@@ -55,7 +55,7 @@ public class WebSocketClient
         await websocketClient.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true,
             CancellationToken.None);
 
-        await Task.Delay(ConfigLoader.Load().MainSettings.Interval); //延迟一定的时间再发送下一条消息
+        // await Task.Delay(ConfigLoader.Load().MainSettings.Interval); //延迟一定的时间再发送下一条消息
     }
 
     private static async Task Receive()

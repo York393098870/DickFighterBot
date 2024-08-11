@@ -2,7 +2,6 @@
 using DickFighterBot.DataBase;
 using DickFighterBot.PublicAPI;
 using NLog;
-using NLog.Fluent;
 
 namespace DickFighterBot.Commands;
 
