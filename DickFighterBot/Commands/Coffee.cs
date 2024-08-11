@@ -32,7 +32,7 @@ public class Coffee
                     dick.Energy += energyAdd;
                     await dickFighterDataBase.UpdateDickEnergy(dick.Energy, dick.GUID);
 
-                    Logger.Info($"群{group_id}的用户{user_id}没有咖啡记录，新增一条咖啡记录！");
+                    Logger.Trace($"群{group_id}的用户{user_id}没有咖啡记录，新增一条咖啡记录！");
 
                     outputMessage =
                         $"[CQ:at,qq={user_id}]，你的牛子[{dick.NickName}]饮用了一杯牛子咖啡，现在精神饱满，体力回复了{energyAdd}点。当前体力为{dick.Energy}/240。";
@@ -52,7 +52,7 @@ public class Coffee
                         dick.Energy += energyAdd;
                         await dickFighterDataBase.UpdateDickEnergy(dick.Energy, dick.GUID);
 
-                        Logger.Info($"群{group_id}的用户{user_id}饮用了一杯牛子咖啡。");
+                        Logger.Trace($"群{group_id}的用户{user_id}饮用了一杯牛子咖啡。");
 
                         outputMessage =
                             $"[CQ:at,qq={user_id}]，你的牛子[{dick.NickName}]饮用了一杯牛子咖啡，现在精神饱满，体力回复了{energyAdd}点。当前体力为{dick.Energy}/240。";

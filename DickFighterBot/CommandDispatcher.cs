@@ -31,7 +31,7 @@ public class CommandDispatcher
             (userId, groupId, _) => new TruthDick().追加攻击(userId, groupId));
         _commands.Add("牛子咖啡", (userId, groupId, _) => new Coffee().DrinkCoffee(userId, groupId));
         _commands.Add("补偿体力",
-            (userId, groupId, groupMessage) => new AdminManager().维护补偿(userId, groupId, groupMessage));
+            (userId, groupId, groupMessage) => new AdminManager().维护补偿(groupId, groupMessage));
         _commands.Add("柴郡", (_, groupId, _) => new 柴郡生成器().Generate(groupId));
     }
 

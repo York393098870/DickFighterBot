@@ -21,7 +21,6 @@ public partial class DickFighterDataBase
                                                   DickBelongings INTEGER,
                                                   NickName TEXT,
                                                   Length REAL,
-                                                  Gender INTEGER,
                                                   GroupNumber INTEGER
                                               );CREATE TABLE IF NOT EXISTS Energy(
                                                   DickGUID TEXT PRIMARY KEY,
