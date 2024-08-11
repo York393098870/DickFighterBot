@@ -16,13 +16,11 @@ Windows环境推荐使用：**LLOneBot**
 #### 启动及配置
 前往**Releases**界面下载对应平台二进制编译文件，然后解压。解压后打开**config**文件夹里面的配置文件**main.json**，填写**WebSocket服务器ip**和**端口**，然后直接启动DickFighterBot主程序即可。
 
-##### 配置文件说明
+##### 部分配置文件说明
 
 **ws_host**:WebSocket服务器ip
 
 **port**:WebSocket服务器端口
-
-**Interval**:消息处理的间隔，单位为毫秒(ms)，更长的间隔有助于避免被封号的概率
 
 **FightEnergyCost**：每次斗牛消耗的体力值
 
