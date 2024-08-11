@@ -11,9 +11,10 @@ public static class GroupMessageGenerator
             action = "send_group_msg_rate_limited",
             @params = new
             {
-                group_id = groupId, message
+                group_id = groupId, message = message
             }
         };
         return JsonSerializer.Serialize(messageObject);
     }
+    
 }

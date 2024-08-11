@@ -32,6 +32,7 @@ public class CommandDispatcher
         _commands.Add("牛子咖啡", (userId, groupId, _) => new Coffee().DrinkCoffee(userId, groupId));
         _commands.Add("补偿体力",
             (userId, groupId, groupMessage) => new AdminManager().维护补偿(userId, groupId, groupMessage));
+        _commands.Add("柴郡", (_, groupId, _) => new 柴郡生成器().Generate(groupId));
     }
 
     public async Task Dispatch(long user_id, long group_id, Message.GroupMessage message)

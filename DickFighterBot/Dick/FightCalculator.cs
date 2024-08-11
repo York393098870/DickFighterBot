@@ -13,9 +13,9 @@ public class FightCalculator
         var differenceValueRate = Mapping.NewMapping(differenceValue);
 
         //增加一个随机因素
-        var randomRate = RandomGenerator.GetRandomDouble() * 0.25d;
+        var randomRate = RandomGenerator.GetRandomDouble() * 0.2d;
 
-        var winRate = randomRate + 75 / 100d / 2 * (differenceValueRate + 1);
+        var winRate = randomRate + 80 / 100d / 2 * (differenceValueRate + 1);
         var winRatePct = winRate * 100;
 
         var isWin = RandomGenerator.GetRandomDouble() < winRate; //判定胜负
