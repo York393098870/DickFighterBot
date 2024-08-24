@@ -26,7 +26,7 @@ public class AdminManager
 
             if (compensationResult)
             {
-                await WebSocketClient.Send(GroupMessageGenerator.Generate($"管理员已经为当前群玩家补偿{energyCompensate}点体力！",
+                await WebSocketClient.Send(群消息序列化工具.Generate($"管理员已经为当前群玩家补偿{energyCompensate}点体力！",
                     group_id));
                 Logger.Info($"管理员{senderId}为群{group_id}的玩家补偿了{energyCompensate}点体力！");
             }

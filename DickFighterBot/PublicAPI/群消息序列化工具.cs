@@ -2,7 +2,7 @@
 
 namespace DickFighterBot.PublicAPI;
 
-public static class GroupMessageGenerator
+public static class 群消息序列化工具
 {
     public static string Generate(string message, long groupId)
     {
@@ -12,7 +12,8 @@ public static class GroupMessageGenerator
             @params = new
             {
                 group_id = groupId, message = message
-            }
+            },
+            echo = "客户端发送消息"
         };
         return JsonSerializer.Serialize(messageObject);
     }

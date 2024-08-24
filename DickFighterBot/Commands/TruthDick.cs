@@ -37,10 +37,10 @@ public class TruthDick
                     var randomNumber = Random.Shared.NextDouble();
                     switch (randomNumber)
                     {
-                        case < 1 / 5d:
+                        case < 1 / 3d:
                             enemyDick = await dickFighterDataBase.GetRandomDick(newDick.GUID);
                             break;
-                        case < 2 / 5d:
+                        case < 1 / 2d:
                         {
                             var resultOfFirstNList = await dickFighterDataBase.GetFirstNDicksByOrder(1);
                             enemyDick = resultOfFirstNList[0];
@@ -57,7 +57,7 @@ public class TruthDick
                     var enemyOldLength = enemyDick.Length;
                     double newLength;
 
-                    var pctForCalculate = 0.9d; //取对数的比例，只有这一部分会被取对数
+                    var pctForCalculate = 0.7d; //取对数的比例，只有这一部分会被取对数
                     var restPct = 1 - pctForCalculate;
                     if (enemyOldLength > 0)
                         newLength = Math.Log(enemyOldLength * pctForCalculate + 1) + restPct * enemyOldLength;
@@ -95,6 +95,6 @@ public class TruthDick
             outputMessage = TipsMessage.DickNotFound(user_id);
         }
 
-        await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(群消息序列化工具.Generate(outputMessage, group_id));
     }
 }

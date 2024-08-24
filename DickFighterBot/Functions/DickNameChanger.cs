@@ -41,7 +41,7 @@ public class DickNameChanger
                 stringMessage = TipsMessage.DickNotFound(user_id);
             }
 
-            await WebSocketClient.Send(GroupMessageGenerator.Generate(stringMessage, group_id));
+            await WebSocketClient.Send(群消息序列化工具.Generate(stringMessage, group_id));
         }
     }
 }

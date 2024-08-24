@@ -99,7 +99,7 @@ public class DickExercise
             outputMessage = TipsMessage.DickNotFound(user_id);
         }
 
-        await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(群消息序列化工具.Generate(outputMessage, group_id));
     }
 
     public static async Task IfNeedExercise(string rawMessage, long user_id, long group_id)

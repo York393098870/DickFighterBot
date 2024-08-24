@@ -7,17 +7,21 @@ public class 柴郡生成器
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    private static string?[] pictures = new string?[2];
+    private static int 缓存数量 = 2;
+    private static string?[] pictures = new string?[缓存数量];
 
     private static async Task 缓存图片()
     {
         Logger.Trace("开始缓存柴郡图片！");
-        for (var i = 0; i < 2; i++)
+        for (var i = 0; i < 缓存数量; i++)
         {
-            pictures[i] = await TryGetBase64();
+            if (pictures[i] == null || pictures[i] == "")
+            {
+                pictures[i] = await TryGetBase64();
+            }
         }
 
-        Logger.Trace($"柴郡图片缓存完成！");
+        Logger.Trace("柴郡图片缓存完成！");
     }
 
     private static async Task<string?> TryGetBase64()
@@ -45,14 +49,13 @@ public class 柴郡生成器
 
     public async Task Generate(long GroupId)
     {
-        if (pictures[0] == null || pictures[1] == null || pictures[0] == "" || pictures[1] == "")
+        await 缓存图片();
+        for (var i = 0; i < 缓存数量; i++)
         {
-            Logger.Trace("柴郡图片缓存为空，正在尝试缓存新的柴郡图片！");
-            await 缓存图片();
+            await WebSocketClient.Send(群消息序列化工具.Generate(GeneratePicMessage(pictures[i]), GroupId));
+            pictures[i] = null;
         }
 
-        await WebSocketClient.Send(GroupMessageGenerator.Generate(GeneratePicMessage(pictures[0]), GroupId));
-        await WebSocketClient.Send(GroupMessageGenerator.Generate(GeneratePicMessage(pictures[1]), GroupId));
         Logger.Trace("发送图片完成，正在重新缓存！");
         await 缓存图片();
     }

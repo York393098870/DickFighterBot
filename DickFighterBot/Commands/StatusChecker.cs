@@ -14,6 +14,6 @@ public class StatusChecker
         var minutes = uptime.Minutes;
         var seconds = uptime.Seconds;
         var outputMessage = $"牛子系统正在运行！\n已运行时间：{days}天{hours}小时{minutes}分钟{seconds}秒";
-        await WebSocketClient.Send(GroupMessageGenerator.Generate(outputMessage, group_id));
+        await WebSocketClient.Send(群消息序列化工具.Generate(outputMessage, group_id));
     }
 }

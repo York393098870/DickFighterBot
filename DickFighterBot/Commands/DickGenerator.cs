@@ -39,6 +39,6 @@ public class DickGenerator
                 $"初始生成的牛子默认拥有240点体力，请及时使用，防止体力溢出！你可以使用“改牛子名 [新牛子名]”指令来更改牛子的姓名。";
         }
 
-        await WebSocketClient.Send(GroupMessageGenerator.Generate(stringMessage, group_id));
+        await WebSocketClient.Send(群消息序列化工具.Generate(stringMessage, group_id));
     }
 }
